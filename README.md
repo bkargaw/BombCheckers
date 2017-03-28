@@ -2,14 +2,15 @@
   [BombCheckers live]()
 
 ## Background
-  BombCheckers is inspired by the classic game of checkers but with a twist. The game will be played by two different players playing from the same machine. the twist on the classic game is that there will be three different piece types each player's side.  
+  BombCheckers is inspired by the classic game of checkers but with a twist. The game will be played by one player. the twist on the classic game is that there will be three different piece types on each player's side.  
 
 ### piece types
   1. classic checkers piece
   2. bomb checkers piece
   3. shield checkers piece
 
-  The back row will have the *classic* checker pieces. The second row will contain *bomb* pieces that move and behave like classic checker pieces but will explode when they capture the other players piece; during the aforementioned explosion any piece within one gird space from the explosion except shield pieces on any player's side will die form the explosion. The last pice type will be a *shield* piece which will move  and behave like classic piece but will be impervious to any explosion.
+  The back row will have the *classic* checker pieces. The second row will contain
+  *shield* piece which will move  and behave like classic piece but will be impervious to any explosion.The last pice type will be a *bomb* pieces that move and behave like classic checker pieces but will explode when it captures the other players piece; during the aforementioned explosion any piece within one gird space from the explosion except shield pieces on any player's side will die form the explosion.
 
 ## Functionality & MVP
 
@@ -19,6 +20,7 @@
   * Play the game and have it behave as described above
   * Choose from different styling of the board (color of squares)
   * Will be able to pause and play music as needed
+  * add ai
 
   In addition, this project will include:
 
@@ -74,4 +76,3 @@
   * option to choose from different piece styles
   * rotate the board to allow the current players pieces to be closest to her/him
   * be able to play from different machines (look at firebase)
-  * add ai
