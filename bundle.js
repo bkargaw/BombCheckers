@@ -82,6 +82,7 @@ $( ()=>{
   ctx = c.getContext("2d");
   board = new Board();
   draw();
+  c.addEventListener('click', ClickCallBack);
 });
 
 
@@ -125,10 +126,9 @@ $( ()=>{
     }
   }
 
-  function drawAPiece(baseImage, x , y, scale){
-    ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
-  }
-
+function drawAPiece(baseImage, x , y, scale){
+  ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
+}
 
 function _createColorForGrid(color1 ='gray', color2 = 'red'){
   let colorGrid = new Array(8);
@@ -146,6 +146,25 @@ function _createColorForGrid(color1 ='gray', color2 = 'red'){
     fillbox = !fillbox;
   }
   return colorGrid;
+}
+
+function _isInbound(x, y){
+  if ( x > 0 && x <= 7  || y > 0 || y <= 7 ) return true;
+  return false;
+}
+function ClickCallBack(event){
+  let x = Math.floor(event.layerY/ 75);
+  let y = Math.floor(event.layerX/ 75);
+  debugger;
+  if (_isInbound(x,y)){
+    if(board.canSelect(x,y)){
+      console.log(true);
+      console.log([x,y]);
+    }else {
+      console.log('can not select that space');
+      console.log([x,y]);
+    }
+  }
 }
 
 
@@ -223,7 +242,7 @@ class Piece {
 
 
 	blowUp(x, y) {
-    if( this.board.grid()[x][y] !== null) {
+    if( this.board.pieces()[x][y] !== null) {
       this.board.remove(x,y);
     }
 	}
@@ -262,8 +281,8 @@ class Board {
   constructor() {
     this.pieces = this.setBoardUp();
     this.current_player = 'blue';
-    this.current_player_has_selected = false;
     this.current_player_has_moved = false;
+    this.current_player_has_selected = false;
     this.current_player_piece_pos = [];
   }
 
@@ -277,35 +296,35 @@ class Board {
     }
     // red classic
     let R1 = new Piece('red', this, [0, 0]);
-    let R2 = new Piece('red', this, [2, 0]);
-		let R3 = new Piece('red', this, [4, 0]);
-    let R4 = new Piece('red', this, [6, 0]);
+    let R2 = new Piece('red', this, [0, 2]);
+		let R3 = new Piece('red', this, [0, 4]);
+    let R4 = new Piece('red', this, [0, 6]);
 		// red Shields
 		let R5 = new ShieldPiece('red', this, [1, 1]);
-    let R6 = new ShieldPiece('red', this, [3, 1]);
-		let R7 = new ShieldPiece('red', this, [5, 1]);
-    let R8 = new ShieldPiece('red', this, [7, 1]);
+    let R6 = new ShieldPiece('red', this, [1, 3]);
+		let R7 = new ShieldPiece('red', this, [1, 5]);
+    let R8 = new ShieldPiece('red', this, [1, 7]);
 		// red bomb
-		let R9 = new BombPiece('red', this, [0, 2]);
+		let R9 = new BombPiece('red', this,  [2, 0]);
     let R10 = new BombPiece('red', this, [2, 2]);
-		let R11 = new BombPiece('red', this, [4, 2]);
-    let R12 = new BombPiece('red', this, [6, 2]);
+		let R11 = new BombPiece('red', this, [2, 4]);
+    let R12 = new BombPiece('red', this, [2, 6]);
 
     // blue classic
 		let B1 = new Piece('blue', this, [7, 7]);
-    let B2 = new Piece('blue', this, [5, 7]);
-    let B3 = new Piece('blue', this, [3, 7]);
-    let B4 = new Piece('blue', this, [1, 7]);
+    let B2 = new Piece('blue', this, [7, 5]);
+    let B3 = new Piece('blue', this, [7, 3]);
+    let B4 = new Piece('blue', this, [7, 1]);
 		// Blue Shields
-		let B5 = new ShieldPiece('blue', this, [0, 6]);
-    let B6 = new ShieldPiece('blue', this, [2, 6]);
-    let B7 = new ShieldPiece('blue', this, [4, 6]);
+		let B5 = new ShieldPiece('blue', this, [6, 0]);
+    let B6 = new ShieldPiece('blue', this, [6, 2]);
+    let B7 = new ShieldPiece('blue', this, [6, 4]);
     let B8 = new ShieldPiece('blue', this, [6, 6]);
 		// Blue bomb
-		let B9 = new BombPiece('blue', this, [7, 5]);
+		let B9 =  new BombPiece('blue', this, [5, 7]);
     let B10 = new BombPiece('blue', this, [5, 5]);
-		let B11 = new BombPiece('blue', this, [3, 5]);
-    let B12 = new BombPiece('blue', this, [1, 5]);
+		let B11 = new BombPiece('blue', this, [5, 3]);
+    let B12 = new BombPiece('blue', this, [5, 1]);
 
       // RED SIDE
 		grid[0][0] = R1; grid[2][0] = R2; grid[4][0] = R3; grid[6][0] = R4;
@@ -427,7 +446,7 @@ class Board {
 
         if (piece.isKing){
           // this means the piece is a king
-          if (deltY === -1 || deltY === 1) return true;
+          return true;
         }else{
 
           if (piece.side === 'red' && deltY === 1) return true;
@@ -441,6 +460,17 @@ class Board {
   validCapturingMove(intx, inty, finx, finy){
     let deltX = finx - intx;
     let deltY = finy - inty;
+    if(Math.abs(deltX) === 2 && Math.abs(deltY) === 2){
+      let piece = this.pieces[intx][inty];
+      if (piece.isKing){
+        // this means the piece is a king
+        return true;
+      }else{
+        if (piece.side === 'red' && deltY === 2) return true;
+        if (piece.side === 'blue' && deltY === -2) return true;
+      }
+    }
+    return false;
   }
 
   /*
@@ -456,8 +486,20 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   move your most recently selected piece to that square.
   */
 
-  select( x, y){
+  select( x, y ){
 
+    let piece = this.pieces[x][y];
+    if (piece){
+      // there is a piece at that loc... selecting a piece to move
+      this.current_player_has_selected = true;
+    }else{
+      // there is noting at that location and the piece is moveing or capturing
+      let [x1 , y1] = this.current_player_piece_pos;
+      this.move( x1,  y1,  x,  y);
+
+      // get ready for other capturing
+      this.current_player_piece_pos = [x,y];
+    }
   }
 
   /*
@@ -465,10 +507,22 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   Moves the piece at (x1, y1), to (x2, y2) capturing any intermediate
   piece if applicable.
   */
-
-
   move( x1,  y1,  x2,  y2){
-
+    let piece = this.pieces[x1][y1];
+    if (Math.abs(x2 - x1) === 2){
+      let xDelete = Math.ave(x1,x2);
+      let yDelete = Math.ave(y1, y2);
+      this.pieces[xDelete][yDelete] = null;
+      this.pieces[x1][y1] = null;
+      this.pieces[x2][y2] = piece;
+      piece.startCapturing();
+      if (piece.Piecetype === 'bomb'){
+        piece.explode(x2,y2);
+      }
+    }
+    this.pieces[x1][y1] = null;
+    this.pieces[x2][y2] = piece;
+    this.current_player_has_moved = true;
   }
 
   /*
@@ -476,14 +530,20 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   To be able to end a turn, a piece must have moved or performed a capture.
   */
   canEndTurn(){
-
+    return this.current_player_has_moved;
   }
   /*
-  Called at the end of each turn. Handles switching of players and anything else that should happen at the end of a turn.
+  Called at the end of each turn. Handles switching of players and
+  anything else that should happen at the end of a turn.
   */
 
   endTurn() {
-
+    let [x,y] = this.current_player_piece_pos;
+    this.pieces[x][y].finishCapturing();
+    this.current_player = 'blue';
+    this.current_player_has_moved = false;
+    this.current_player_has_selected = false;
+    this.current_player_piece_pos = [];
   }
 
   /*
@@ -498,9 +558,23 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
      by the number of pieces belonging to each team.
   */
  winner(){
-
+   let countFire = 0;
+   let countWater = 0;
+   for (let i = 0; i < 8; i++){
+     for (let j = 0; j < 8; j++){
+       let piece = this.pieces[i][j];
+       if(piece){
+         if (piece.side === 'red') countFire++;
+         if (piece.side === 'blue') countWater++;
+        if (countWater > 0 && countFire > 0) return null;
+       }
+     }
+   }
+   if (countWater === 0 && countFire === 0) return 'Tie';
+   if (countWater === 0 && countFire > 0) return 'Fire';
+   if (countWater > 0 && countFire === 0) return 'Water';
+   return null;
   }
-
 }
 
 module.exports = Board;
