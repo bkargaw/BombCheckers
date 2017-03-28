@@ -49,13 +49,16 @@
       1. how to place images
       2. how to create a board
       3. how to host music and allow for easy user control
-    * find out hot to get a 2d explosion animation
+    * find out how to get a 2d explosion animation
     * create a basic board and place it on the canvas
     * create the skeleton needed to create all the classes needed to run the game
 
 ### day 2
-    * write all the classes needed for the game outline in the skeleton from day one
-      start with the piece classes, then the board then the game....
+    * write the board class which will
+      1. create the default placing of the pieces
+      2. define all the methods that check game logics
+    * write the piece class that will be the super class of bomb and shield pieces
+    * write the bomb and shield classes overwriting the needed methods
 ### day 3
     * finished any unfinished classes
     * create and add modal that explains the game rules
