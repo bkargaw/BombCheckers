@@ -34,7 +34,6 @@
 ## Architecture and Technologies
   * js for game logic
   * p5.js for creating graphics(p5.dom) and hosting audio(p5.sound)
-  * use webpack to bundle scripts
 ##### Main scripts in the app
   * game.js  - This script will be responsible to organizing the turns and making high level decisions like check if the game is over, who whose turn it is  and getting the user input.
   * board.js - This will be responsible on hosting all the pieces, creating the board layout and style, and handeling logic like move a piece, check if a move is valid and so on...
@@ -45,7 +44,6 @@
 ## Implementation Timeline
 
 ### day 1
-    * setup webpack config
     * learn how to use the canvas element from HTML5
     * learn the p5 Library and find important method that will aid in the creation of the game, sound and modals  
       1. how to place images
@@ -67,9 +65,10 @@
     * finish adding audio
     * create multiple board color schemes and add them to the page as buttons to toggle between different styles
     * style the page for the end product
+    * create a demo video
 
 # Bonus features
   * option to choose from different piece styles
   * rotate the board to allow the current players pieces to be closest to her/him
-  * be able to play from different machines
+  * be able to play from different machines (look at firebase)
   * add ai
