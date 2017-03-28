@@ -17,8 +17,8 @@
 
   * Start, and reset the game board
   * Play the game and have it behave as described above
-  * Choose from different styling of the board (color of squares)
   * Will be able to pause and play music as needed
+  * Add ai
 
   In addition, this project will include:
 
@@ -29,7 +29,7 @@
 ## Wireframes
   The app will be a single page app the will allow the user to interact with the game as well as allow them to style the board, toggle music on and off, and toggle the game rules modal on and off. The page will also have a link to a video that show the basic game play that will serve as an alternative or supplementary to the game rules modal.
 
-![alt text](https://github.com/bkargaw/BombCheckers/blob/master/asset/BombChecker.png)
+![alt text](https://github.com/bkargaw/BombCheckers/blob/master/asset/images/BombChecker.png)
 
 ## Architecture and Technologies
   * js for game logic
@@ -71,4 +71,4 @@
   * option to choose from different piece styles
   * rotate the board to allow the current players pieces to be closest to her/him
   * be able to play from different machines (look at firebase)
-  * add ai
+  * Choose from different styling of the board (color of squares)
