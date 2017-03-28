@@ -172,21 +172,8 @@ class Piece {
   }
 
 
-
-  getSide() {
-		return this.side;
-	}
-
   getboard() {
     return this.board;
-	}
-
-  getPiecetype() {
-    return this.Piecetype;
-	}
-
-  getHaskilledthisturn() {
-		return this.haskilledthisturn;
 	}
 
   setHaskilledthisturn(haskilledthisturn) {
@@ -249,22 +236,14 @@ class Piece {
 	 * Signals that this Piece has begun to capture (as in it captured a Piece)
 	 */
   startCapturing() {
-		this.haskilledthisturn=true;
-	}
-
-	/**
-	 * Returns whether or not this piece has captured this turn
-	 */
-  hasCaptured() {
-		return this.haskilledthisturn;
+		this.haskilledthisturn = true;
 	}
 
 	/**
 	 * Resets the Piece for future turns
 	 */
-
   finishCapturing() {
-		this.haskilledthisturn = true;
+		this.haskilledthisturn = false;
 	}
 }
 
@@ -282,6 +261,10 @@ const ShieldPiece = __webpack_require__(4);
 class Board {
   constructor() {
     this.pieces = this.setBoardUp();
+    this.current_player = 'blue';
+    this.current_player_has_selected = false;
+    this.current_player_has_moved = false;
+    this.current_player_piece_pos = [];
   }
 
   setBoardUp(){
@@ -337,7 +320,13 @@ class Board {
     return grid;
   }
 
-
+  switchPlayer(){
+    if ( this.current_player === 'blue'){
+      this.current_player = 'red';
+    }else {
+      this.current_player = 'blue';
+    }
+  }
 
   _isInbound(x, y){
     if ( x > 0 && x <= 7  || y > 0 || y <= 7 ) return true;
@@ -366,30 +355,92 @@ class Board {
 
   /*
   Executes a remove. Returns the piece that was removed.
-  If the input (x, y) is out of bounds, returns null and prints an appropriate message.
-  If there is no piece at (x, y), returns null and prints an appropriate message.
+  * If the input (x, y) is out of bounds, returns null and prints
+  an appropriate message.
+  * If there is no piece at (x, y), returns null and prints an
+  appropriate message.
    */
   remove( x,  y) {
-    if ( !(this._isInbound()) ) return null;
+    if ( !(this._isInbound())) return null;
     let piece = this.pieces[x][y];
     this.pieces[x][y] = null;
     return piece;
   }
   /*
    Returns true if the square at (x, y) can be selected.
-  - A square with a piece may be selected if it is the corresponding player’s turn and one of the following is true:
-      * The player has not selected a piece yet.
+  - A square with a piece may be selected if it is the
+    corresponding player’s turn and one of the following is true:
+    * The player has not selected a piece yet.
     * The player has selected a piece, but did not move it.
 
   - An empty square may be selected if one of the following is true:
-    * During this turn, the player has selected a Piece which hasn’t moved yet and is
-      selecting an empty spot which is a valid move for the previously selected Piece.
-    * During this turn, the player has selected a Piece, captured, and has selected another
-        valid capture destination. When performing multi-captures, you should only select the active
-        piece once; all other selections should be valid destination points.
+
+    * During this turn, the player has selected a Piece which hasn’t
+    moved yet and is selecting an empty spot which is a valid move for
+    the previously selected Piece.
+
+    * During this turn, the player has selected a Piece, captured,
+    and has selected another valid capture destination. When performing
+    multi-captures, you should only select the activepiece once; all
+    other selections should be valid destination points.
   */
   canSelect(x, y){
+    if (this._isInbound(x,y)){
+      if (this.pieces[x][y]) {
+        //  there is a piece at this location
+        if (!this.current_player_has_selected ||
+            (this.current_player_has_selected &&
+             !this.current_player_has_moved)) return true;
+      }else{
+        //  there is a NO piece at this location
+        // if the
+        let pos = this.current_player_piece_pos;
+        if(this.current_player_has_selected &&
+           !(this.pieces[pos[0]][pos[1]].hasCaptured())){
+             this.validFirstMove(pos[0], pos[1], x, y);
+        }
+        if(this.current_player_has_selected &&
+           (this.pieces[pos[0]][pos[1]].haskilledthisturn)){
+             this.validCapturingMove(pos[0], pos[1], x, y);
+        }
+      }
+    }
+    return false;
+  }
 
+  validFirstMove(intx, inty, finx, finy){
+    let deltX = finx - intx;
+    let deltY = finy - inty;
+
+    if(Math.abs(deltX) !== 1 || Math.abs(deltY) !== 1){
+
+      // this means the selected place is an attempt to capture
+      return this.validCapturingMove(intx, inty, finx, finy);
+
+    }else if(Math.abs(deltX) === 1 && Math.abs(deltY) === 1) {
+
+      // this mean the destination is one step only
+      if (intx !== finx && intx !== finy){
+
+        //  this means that the destination is not vert or horz
+        let piece = this.pieces[intx][inty];
+
+        if (piece.isKing){
+          // this means the piece is a king
+          if (deltY === -1 || deltY === 1) return true;
+        }else{
+
+          if (piece.side === 'red' && deltY === 1) return true;
+          if (piece.side === 'blue' && deltY === -1) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  validCapturingMove(intx, inty, finx, finy){
+    let deltX = finx - intx;
+    let deltY = finy - inty;
   }
 
   /*
