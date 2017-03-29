@@ -83,6 +83,9 @@ $( ()=>{
   board = new Board();
   draw();
   c.addEventListener('click', ClickCallBack);
+  document.body.onkeyup = function(e){
+    if(e.keyCode == 32) endTurn();
+  };
 });
 
 
@@ -116,14 +119,22 @@ $( ()=>{
           let scaledY = piece.y;
           let img = piece.getImage();
           if(img.complete) { //check if image was already loaded by the browser
-            drawAPiece(img, scaledX , scaledY, scale);
+            drawAPiece(img, piece.x , piece.y, scale);
           }else {
             img.onload = ()=> drawAPiece(img, scaledX , scaledY, scale);
           }
-
         }
       }
     }
+  }
+
+  function highlightPos(i, j){
+    let x = i * 75 ;
+    let y = j * 75;
+    ctx.beginPath();
+    ctx.rect(x, y, 75, 75);
+    ctx.fillStyle = 'white';
+    ctx.fill();
   }
 
 function drawAPiece(baseImage, x , y, scale){
@@ -149,21 +160,34 @@ function _createColorForGrid(color1 ='gray', color2 = 'red'){
 }
 
 function _isInbound(x, y){
-  if ( x > 0 && x <= 7  || y > 0 || y <= 7 ) return true;
+  if ( x >= 0 && x <= 7  && y >= 0 && y <= 7 ) return true;
   return false;
 }
+
 function ClickCallBack(event){
-  let x = Math.floor(event.layerY/ 75);
-  let y = Math.floor(event.layerX/ 75);
-  debugger;
+  let x = Math.floor(event.layerX/ 75);
+  let y = Math.floor(event.layerY/ 75);
   if (_isInbound(x,y)){
     if(board.canSelect(x,y)){
-      console.log(true);
-      console.log([x,y]);
+      if (board.select(x,y)){
+        drawBackGround();
+        drawThePieces();
+      }else {
+        drawBackGround();
+        highlightPos(x, y);
+        drawThePieces();
+      }
+
     }else {
       console.log('can not select that space');
       console.log([x,y]);
     }
+  }
+}
+
+function endTurn(){
+  if (board.canEndTurn()){
+    board.endTurn();
   }
 }
 
@@ -242,14 +266,13 @@ class Piece {
 
 
 	blowUp(x, y) {
-    if( this.board.pieces()[x][y] !== null) {
+    if( this.board.pieces[x][y] !== null) {
       this.board.remove(x,y);
     }
 	}
 
   // only applies to bomb pieces
   explode( x, y) {
-
    }
 	/**
 	 * Signals that this Piece has begun to capture (as in it captured a Piece)
@@ -296,35 +319,35 @@ class Board {
     }
     // red classic
     let R1 = new Piece('red', this, [0, 0]);
-    let R2 = new Piece('red', this, [0, 2]);
-		let R3 = new Piece('red', this, [0, 4]);
-    let R4 = new Piece('red', this, [0, 6]);
+    let R2 = new Piece('red', this, [2, 0]);
+		let R3 = new Piece('red', this, [4, 0]);
+    let R4 = new Piece('red', this, [6, 0]);
 		// red Shields
 		let R5 = new ShieldPiece('red', this, [1, 1]);
-    let R6 = new ShieldPiece('red', this, [1, 3]);
-		let R7 = new ShieldPiece('red', this, [1, 5]);
-    let R8 = new ShieldPiece('red', this, [1, 7]);
+    let R6 = new ShieldPiece('red', this, [3, 1]);
+		let R7 = new ShieldPiece('red', this, [5, 1]);
+    let R8 = new ShieldPiece('red', this, [7, 1]);
 		// red bomb
-		let R9 = new BombPiece('red', this,  [2, 0]);
+		let R9 = new BombPiece('red', this, [0, 2]);
     let R10 = new BombPiece('red', this, [2, 2]);
-		let R11 = new BombPiece('red', this, [2, 4]);
-    let R12 = new BombPiece('red', this, [2, 6]);
+		let R11 = new BombPiece('red', this, [4, 2]);
+    let R12 = new BombPiece('red', this, [6, 2]);
 
     // blue classic
 		let B1 = new Piece('blue', this, [7, 7]);
-    let B2 = new Piece('blue', this, [7, 5]);
-    let B3 = new Piece('blue', this, [7, 3]);
-    let B4 = new Piece('blue', this, [7, 1]);
+    let B2 = new Piece('blue', this, [5, 7]);
+    let B3 = new Piece('blue', this, [3, 7]);
+    let B4 = new Piece('blue', this, [1, 7]);
 		// Blue Shields
-		let B5 = new ShieldPiece('blue', this, [6, 0]);
-    let B6 = new ShieldPiece('blue', this, [6, 2]);
-    let B7 = new ShieldPiece('blue', this, [6, 4]);
+		let B5 = new ShieldPiece('blue', this, [0, 6]);
+    let B6 = new ShieldPiece('blue', this, [2, 6]);
+    let B7 = new ShieldPiece('blue', this, [4, 6]);
     let B8 = new ShieldPiece('blue', this, [6, 6]);
 		// Blue bomb
-		let B9 =  new BombPiece('blue', this, [5, 7]);
+		let B9 = new BombPiece('blue', this, [7, 5]);
     let B10 = new BombPiece('blue', this, [5, 5]);
-		let B11 = new BombPiece('blue', this, [5, 3]);
-    let B12 = new BombPiece('blue', this, [5, 1]);
+		let B11 = new BombPiece('blue', this, [3, 5]);
+    let B12 = new BombPiece('blue', this, [1, 5]);
 
       // RED SIDE
 		grid[0][0] = R1; grid[2][0] = R2; grid[4][0] = R3; grid[6][0] = R4;
@@ -348,7 +371,7 @@ class Board {
   }
 
   _isInbound(x, y){
-    if ( x > 0 && x <= 7  || y > 0 || y <= 7 ) return true;
+    if ( x >= 0 && x <= 7  && y >= 0 && y <= 7 ) return true;
     return false;
   }
   /*
@@ -405,22 +428,29 @@ class Board {
   */
   canSelect(x, y){
     if (this._isInbound(x,y)){
-      if (this.pieces[x][y]) {
+      let piece = this.pieces[x][y];
+      if (piece) {
         //  there is a piece at this location
-        if (!this.current_player_has_selected ||
-            (this.current_player_has_selected &&
-             !this.current_player_has_moved)) return true;
+          if (!this.current_player_has_selected ||
+             (this.current_player_has_selected &&
+             !this.current_player_has_moved)){
+
+               // can only move your own piece
+             if(piece.side === this.current_player){
+               return true;
+             }
+        }
       }else{
         //  there is a NO piece at this location
         // if the
         let pos = this.current_player_piece_pos;
         if(this.current_player_has_selected &&
-           !(this.pieces[pos[0]][pos[1]].hasCaptured())){
-             this.validFirstMove(pos[0], pos[1], x, y);
+           !(this.pieces[pos[0]][pos[1]].haskilledthisturn)){
+            return this.validFirstMove(pos[0], pos[1], x, y);
         }
         if(this.current_player_has_selected &&
            (this.pieces[pos[0]][pos[1]].haskilledthisturn)){
-             this.validCapturingMove(pos[0], pos[1], x, y);
+            return this.validCapturingMove(pos[0], pos[1], x, y);
         }
       }
     }
@@ -487,7 +517,6 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   */
 
   select( x, y ){
-
     let piece = this.pieces[x][y];
     if (piece){
       // there is a piece at that loc... selecting a piece to move
@@ -495,11 +524,14 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
     }else{
       // there is noting at that location and the piece is moveing or capturing
       let [x1 , y1] = this.current_player_piece_pos;
-      this.move( x1,  y1,  x,  y);
-
+      let movetype =this.move( x1,  y1,  x,  y);
+      if (movetype === 'explode' ){
+        return true;
+      }
       // get ready for other capturing
-      this.current_player_piece_pos = [x,y];
     }
+    this.current_player_piece_pos = [x,y];
+    return false;
   }
 
   /*
@@ -510,19 +542,24 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   move( x1,  y1,  x2,  y2){
     let piece = this.pieces[x1][y1];
     if (Math.abs(x2 - x1) === 2){
-      let xDelete = Math.ave(x1,x2);
-      let yDelete = Math.ave(y1, y2);
+      let xDelete = (x1 + x2) / 2;
+      let yDelete = (y1 + y2) / 2;
       this.pieces[xDelete][yDelete] = null;
       this.pieces[x1][y1] = null;
       this.pieces[x2][y2] = piece;
       piece.startCapturing();
       if (piece.Piecetype === 'bomb'){
         piece.explode(x2,y2);
+        this.pieces[x1][y1] = null;
+        this.pieces[x2][y2] = null;
+        return 'explode';
       }
     }
     this.pieces[x1][y1] = null;
     this.pieces[x2][y2] = piece;
+    piece.setPos([x2, y2]);
     this.current_player_has_moved = true;
+    return null;
   }
 
   /*
@@ -540,7 +577,7 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   endTurn() {
     let [x,y] = this.current_player_piece_pos;
     this.pieces[x][y].finishCapturing();
-    this.current_player = 'blue';
+    this.switchPlayer();
     this.current_player_has_moved = false;
     this.current_player_has_selected = false;
     this.current_player_piece_pos = [];
@@ -619,7 +656,7 @@ class BombPiece extends Piece {
 			  let xmax= x+1;
 			  let ymax= y+1;
 			  if (x === 0){
-				  xmin=x;
+				  xmin = x;
 			  }
 			  if (y === 0){
 				  ymin = y;
@@ -633,8 +670,8 @@ class BombPiece extends Piece {
 			  for (let i = xmin; i <= xmax; i++){
 				  for (let j = ymin; j <= ymax; j++){
 					  let b = this.getboard();
-					  if (b.getMyPieces()[i][j] !== null){
-					      b.getMyPieces()[i][j].blowUp(i,j);
+					  if (b.pieces[i][j] !== null){
+					      b.pieces[i][j].blowUp(i,j);
 					  }
 				  }
 			  }
