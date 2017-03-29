@@ -1,4 +1,3 @@
-
 <html>
 <head>
   <meta charset="UTF-8">
@@ -12,9 +11,37 @@
 </head>
 
 <body>
+  <button id='resetGame'>Restart Game</button>
   <div id="GAME-holder">
     <canvas id='canvas'><canvas>
       <!-- Our sketch will go here! -->
+    </div>
+        <!-- Trigger/Open The Modal -->
+    <button id="myBtn">Open Modal</button>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+          <h3>Game Rules</h3>
+          The game is the same as regular checkers with a couple of
+           twists... all pieces behave like classic checker piece but with the following exceptions
+           <br/>
+          <ul>
+            <li>Bomb pieces will explode when they capture a piece; during the explosion any piece within one gird space will die</li>
+            <li>Shield pieces behave like classic piece but will be impervious to any explosion.</li>
+          </ul>
+        <h4>Moves<h4>
+        <p>
+          - Mouse click to selet a piece or empty square (Note:- only need to select a piece once a turn)
+          <br/>
+          - Spacebar to end a trun
+          <br/>
+        </p>
+      </div>
+
     </div>
     <script language="javascript" type="text/javascript" src="bundle.js"></script>
 </body>

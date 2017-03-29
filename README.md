@@ -1,5 +1,5 @@
 # BombCheckers
-  [BombCheckers live]()
+  [BombCheckers live](https://bkargaw.github.io/BombCheckers/)
 
 ## Background
   BombCheckers is inspired by the classic game of checkers but with a twist. The game will be played by one player. the twist on the classic game is that there will be three different piece types on each player's side.  
