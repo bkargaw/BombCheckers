@@ -63,137 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Board = __webpack_require__(2);
-
-let ctx;
-let board;
-
-$( ()=>{
-  let c = document.getElementById("canvas");
-  c.width  = 600;
-  c.height = 600;
-  ctx = c.getContext("2d");
-  board = new Board();
-  draw();
-  c.addEventListener('click', ClickCallBack);
-  document.body.onkeyup = function(e){
-    if(e.keyCode == 32) endTurn();
-  };
-});
-
-
-  function draw() {
-    drawBackGround();
-    drawThePieces();
-  }
-
-  function drawBackGround() {
-    let colors = _createColorForGrid();
-    for (let i = 0 ; i < 8; i++){
-      for (let j = 0 ; j < 8; j++){
-        let x = i * 75 ;
-        let y = j * 75;
-        ctx.beginPath();
-        ctx.rect(x, y, 75, 75);
-        ctx.fillStyle = colors[i][j];
-        ctx.fill();
-      }
-    }
-  }
-
-  function drawThePieces(){
-    let piece;
-    let scale = 75;
-    for (let i = 0; i < 8 ; i++){
-      for(let j = 0; j < 8 ; j++){
-        piece = board.pieces[i][j];
-        if( piece ){
-          let scaledX = piece.x;
-          let scaledY = piece.y;
-          let img = piece.getImage();
-          if(img.complete) { //check if image was already loaded by the browser
-            drawAPiece(img, piece.x , piece.y, scale);
-          }else {
-            img.onload = ()=> drawAPiece(img, scaledX , scaledY, scale);
-          }
-        }
-      }
-    }
-  }
-
-  function highlightPos(i, j){
-    let x = i * 75 ;
-    let y = j * 75;
-    ctx.beginPath();
-    ctx.rect(x, y, 75, 75);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-  }
-
-function drawAPiece(baseImage, x , y, scale){
-  ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
-}
-
-function _createColorForGrid(color1 ='gray', color2 = 'red'){
-  let colorGrid = new Array(8);
-  let fillbox = true;
-  for (let i = 0 ; i < 8; i++) {
-    colorGrid[i] = new Array(8);
-    for (let j = 0 ; j < 8; j++) {
-      if (fillbox){
-        colorGrid[i][j] = color1;
-      }else{
-        colorGrid[i][j] = color2;
-      }
-      fillbox = !fillbox;
-    }
-    fillbox = !fillbox;
-  }
-  return colorGrid;
-}
-
-function _isInbound(x, y){
-  if ( x >= 0 && x <= 7  && y >= 0 && y <= 7 ) return true;
-  return false;
-}
-
-function ClickCallBack(event){
-  let x = Math.floor(event.layerX/ 75);
-  let y = Math.floor(event.layerY/ 75);
-  if (_isInbound(x,y)){
-    if(board.canSelect(x,y)){
-      if (board.select(x,y)){
-        drawBackGround();
-        drawThePieces();
-      }else {
-        drawBackGround();
-        highlightPos(x, y);
-        drawThePieces();
-      }
-
-    }else {
-      console.log('can not select that space');
-      console.log([x,y]);
-    }
-  }
-}
-
-function endTurn(){
-  if (board.canEndTurn()){
-    board.endTurn();
-  }
-}
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 class Piece {
@@ -272,8 +146,8 @@ class Piece {
 	}
 
   // only applies to bomb pieces
-  explode( x, y) {
-   }
+  // explode( x, y) {
+  //  }
 	/**
 	 * Signals that this Piece has begun to capture (as in it captured a Piece)
 	 */
@@ -293,12 +167,12 @@ module.exports = Piece;
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Piece = __webpack_require__(1);
-const BombPiece = __webpack_require__(3);
-const ShieldPiece = __webpack_require__(4);
+const Piece = __webpack_require__(0);
+const BombPiece = __webpack_require__(2);
+const ShieldPiece = __webpack_require__(3);
 
 class Board {
   constructor() {
@@ -526,6 +400,7 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
       let [x1 , y1] = this.current_player_piece_pos;
       let movetype =this.move( x1,  y1,  x,  y);
       if (movetype === 'explode' ){
+        this.current_player_piece_pos = [x,y];
         return true;
       }
       // get ready for other capturing
@@ -549,9 +424,10 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
       this.pieces[x2][y2] = piece;
       piece.startCapturing();
       if (piece.Piecetype === 'bomb'){
-        piece.explode(x2,y2);
         this.pieces[x1][y1] = null;
-        this.pieces[x2][y2] = null;
+        this.pieces[x2][y2] = piece;
+        piece.setPos([x2, y2]);
+        this.current_player_has_moved = true;
         return 'explode';
       }
     }
@@ -618,10 +494,10 @@ module.exports = Board;
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Piece = __webpack_require__(1);
+const Piece = __webpack_require__(0);
 
 
 class BombPiece extends Piece {
@@ -650,7 +526,7 @@ class BombPiece extends Piece {
     return BombImg;
   }
 
-  explode( x, y) {
+  explode( x, y ) {
 			  let xmin= x-1;
 			  let ymin= y-1;
 			  let xmax= x+1;
@@ -669,9 +545,8 @@ class BombPiece extends Piece {
 			  }
 			  for (let i = xmin; i <= xmax; i++){
 				  for (let j = ymin; j <= ymax; j++){
-					  let b = this.getboard();
-					  if (b.pieces[i][j] !== null){
-					      b.pieces[i][j].blowUp(i,j);
+					  if (this.board.pieces[i][j] !== null){
+					      this.board.pieces[i][j].blowUp(i,j);
 					  }
 				  }
 			  }
@@ -686,10 +561,10 @@ class BombPiece extends Piece {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Piece = __webpack_require__(1);
+const Piece = __webpack_require__(0);
 
 class ShieldPiece extends Piece {
   constructor( side, board, pos){
@@ -724,6 +599,135 @@ class ShieldPiece extends Piece {
 }
 
 module.exports = ShieldPiece;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Board = __webpack_require__(1);
+
+let c;
+let ctx;
+let board;
+
+$( ()=>{
+  c = document.getElementById("canvas");
+  c.width  = 600;
+  c.height = 600;
+  ctx = c.getContext("2d");
+  board = new Board();
+  draw();
+  c.addEventListener('click', ClickCallBack);
+  document.body.onkeyup = function(e){
+    if(e.keyCode == 32) endTurn();
+  };
+});
+
+
+  function draw() {
+    drawBackGround();
+    drawThePieces();
+  }
+
+  function drawBackGround() {
+    let colors = _createColorForGrid();
+    for (let i = 0 ; i < 8; i++){
+      for (let j = 0 ; j < 8; j++){
+        let x = i * 75 ;
+        let y = j * 75;
+        ctx.beginPath();
+        ctx.rect(x, y, 75, 75);
+        ctx.fillStyle = colors[i][j];
+        ctx.fill();
+      }
+    }
+  }
+
+  function drawThePieces(){
+    let piece;
+    let scale = 75;
+    for (let i = 0; i < 8 ; i++){
+      for(let j = 0; j < 8 ; j++){
+        piece = board.pieces[i][j];
+        if( piece ){
+          let scaledX = piece.x;
+          let scaledY = piece.y;
+          let img = piece.getImage();
+          if(img.complete) { //check if image was already loaded by the browser
+            drawAPiece(img, piece.x , piece.y, scale);
+          }else {
+            img.onload = ()=> drawAPiece(img, scaledX , scaledY, scale);
+          }
+        }
+      }
+    }
+  }
+
+  function highlightPos(i, j){
+    let x = i * 75 ;
+    let y = j * 75;
+    ctx.beginPath();
+    ctx.rect(x, y, 75, 75);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+  }
+
+function drawAPiece(baseImage, x , y, scale){
+  ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
+}
+
+function _createColorForGrid(color1 ='gray', color2 = 'red'){
+  let colorGrid = new Array(8);
+  let fillbox = true;
+  for (let i = 0 ; i < 8; i++) {
+    colorGrid[i] = new Array(8);
+    for (let j = 0 ; j < 8; j++) {
+      if (fillbox){
+        colorGrid[i][j] = color1;
+      }else{
+        colorGrid[i][j] = color2;
+      }
+      fillbox = !fillbox;
+    }
+    fillbox = !fillbox;
+  }
+  return colorGrid;
+}
+
+function _isInbound(x, y){
+  if ( x >= 0 && x <= 7  && y >= 0 && y <= 7 ) return true;
+  return false;
+}
+
+function ClickCallBack(event){
+  let x = Math.floor(event.layerX/ 75);
+  let y = Math.floor(event.layerY/ 75);
+  if (_isInbound(x,y)){
+    if(board.canSelect(x,y)){
+      ctx.clearRect(0,0,c.width, c.height);
+      if (board.select(x,y)){
+        drawBackGround();
+        highlightPos(x, y);
+        drawThePieces();
+      }else {
+        drawBackGround();
+        highlightPos(x, y);
+        drawThePieces();
+      }
+
+    }else {
+      console.log('can not select that space');
+      console.log([x,y]);
+    }
+  }
+}
+
+function endTurn(){
+  if (board.canEndTurn()){
+    board.endTurn();
+  }
+}
 
 
 /***/ })
