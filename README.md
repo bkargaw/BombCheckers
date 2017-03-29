@@ -18,7 +18,6 @@
 
   * Start, and reset the game board
   * Play the game and have it behave as described above
-  * Choose from different styling of the board (color of squares)
   * Will be able to pause and play music as needed
   * add ai
 
@@ -73,6 +72,6 @@
     * create a demo video
 
 # Bonus features
-  * option to choose from different piece styles
-  * rotate the board to allow the current players pieces to be closest to her/him
+  * Choose from different styling of the board (color of squares)
   * be able to play from different machines (look at firebase)
+  * enable both single and multiple player modes

@@ -415,7 +415,14 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   piece if applicable.
   */
   move( x1,  y1,  x2,  y2){
+    // make the thing a king when y is 7 for red and 0 for blue
     let piece = this.pieces[x1][y1];
+    if (y2 === 7 && piece.side === 'red'){
+      piece.setKing(true);
+    }else if(y2 === 0 && piece.side === 'blue'){
+      piece.setKing(true);
+
+    }
     if (Math.abs(x2 - x1) === 2){
       let xDelete = (x1 + x2) / 2;
       let yDelete = (y1 + y2) / 2;
@@ -620,7 +627,7 @@ $( ()=>{
   ctx = c.getContext("2d");
   board = new Board();
   draw();
-  c.addEventListener('click', ClickCallBack);
+  c.addEventListener('click', handleClickFromUser);
   document.body.onkeyup = function(e){
     if(e.keyCode == 32) endTurn();
   };
@@ -703,7 +710,7 @@ function _isInbound(x, y){
   return false;
 }
 
-function ClickCallBack(event){
+function handleClickFromUser(event){
   let x = Math.floor(event.layerX/ 75);
   let y = Math.floor(event.layerY/ 75);
   if (_isInbound(x,y)){
