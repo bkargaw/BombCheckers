@@ -615,17 +615,54 @@ module.exports = ShieldPiece;
 const Board = __webpack_require__(1);
 
 let c;
+let color1;
+let color2;
 let ctx;
 let board;
+let cBackGround1;
+let cBackGround1Ctx1;
+
+let cBackGround2;
+let cBackGround2Ctx2;
+
+let cBackGroundOriginal;
+let cBackGroundOriginalCtx;
+
 let explosionSprite = new Image();
-var explosionSound = new Audio("asset/audio/Bomb_Exploding.mp3");
 explosionSprite.src = 'asset/images/explosion-sprite-sheet.png';
+var explosionSound = new Audio("asset/audio/Bomb_Exploding.mp3");
 $( ()=>{
   c = document.getElementById("canvas");
   c.width  = 600;
   c.height = 600;
   ctx = c.getContext("2d");
   board = new Board();
+  //default board colors
+  color1 = 'gray';
+  color2 = 'red';
+
+  // background option canvas 2
+  cBackGround2 = document.getElementById("background2");
+  cBackGround2.width  = 100;
+  cBackGround2.height = 100;
+  cBackGround2Ctx2 = cBackGround2.getContext("2d");
+  cBackGround2.addEventListener('click',
+        ChengeBackgroundColor('rgb(249, 189, 129)', 'rgb(255, 55, 0)'));
+
+  // background option canvas 1
+  cBackGround1 = document.getElementById("background1");
+  cBackGround1.width  = 100;
+  cBackGround1.height = 100;
+  cBackGround1Ctx1 = cBackGround1.getContext("2d");
+  cBackGround1.addEventListener('click',
+        ChengeBackgroundColor('rgb(68, 62, 62)', 'white'));
+  // background option canvas original
+  cBackGroundOriginal = document.getElementById("backgroundOrignal");
+  cBackGroundOriginal.width  = 100;
+  cBackGroundOriginal.height = 100;
+  cBackGroundOriginalCtx = cBackGroundOriginal.getContext("2d");
+  cBackGroundOriginal.addEventListener('click',
+        ChengeBackgroundColor('gray', 'red'));
   draw();
   c.addEventListener('click', handleClickFromUser);
   document.body.onkeyup = function(e){
@@ -633,6 +670,7 @@ $( ()=>{
   };
   let reset = document.getElementById("resetGame");
   reset.addEventListener('click', resetGame);
+  drawTheBackgroundOptions();
 });
 
 function resetGame() {
@@ -641,11 +679,36 @@ function resetGame() {
   drawThePieces();
 }
 
+function ChengeBackgroundColor(col1, col2){
+  return () => {
+    color1 = col1;
+    color2 = col2;
+    drawBackGround();
+    drawThePieces();
+  };
+}
 
 
   function draw() {
     drawBackGround();
     drawThePieces();
+  }
+
+  function drawTheBackgroundOptions() {
+    let background1Image = new Image();
+    background1Image.onload = ()=> cBackGround1Ctx1.drawImage(
+      background1Image, 0, 0, 100, 100);
+    background1Image.src = 'asset/images/white & black.png';
+
+    let background2Image = new Image();
+    background2Image.onload = ()=> cBackGround2Ctx2.drawImage(
+      background2Image, 0, 0, 100, 100);
+    background2Image.src = 'asset/images/wood.png';
+
+    let backgroundOriginalImage = new Image();
+    backgroundOriginalImage.onload = ()=> cBackGroundOriginalCtx.drawImage(
+      backgroundOriginalImage, 0, 0, 100, 100);
+    backgroundOriginalImage.src = 'asset/images/red and gray.png';
   }
 
   function drawBackGround() {
@@ -696,7 +759,7 @@ function drawAPiece(baseImage, x , y, scale){
   ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
 }
 
-function _createColorForGrid(color1 ='gray', color2 = 'red'){
+function _createColorForGrid(){
   let colorGrid = new Array(8);
   let fillbox = true;
   for (let i = 0 ; i < 8; i++) {
@@ -724,13 +787,11 @@ function handleClickFromUser(event){
   let y = Math.floor(event.layerY/ 75);
   if (_isInbound(x,y)){
     if(board.canSelect(x,y)){
-      // ctx.clearRect(0,0,c.width, c.height);
       if (board.select(x,y)){
-        resetGame();
         let bombPiece= board.pieces[x][y];
         board.endTurn();
         let clearDeadPieces = () => bombPiece.explode(x,y);
-        startAnim((x * 75) - 75 , (y * 75) - 75, clearDeadPieces);
+        startAnim((x * 75) - 90 , (y * 75) - 90, clearDeadPieces);
       }else {
         drawBackGround();
         highlightPos(x, y);
@@ -763,8 +824,8 @@ function endTurn(){
 
 var Xs = 0;
 var Ys = 0;
-var w = 225;
-var h = 225;
+var w = 240;
+var h = 240;
 var frameCnt = 25;
 var idx = 0;
 var intval;
@@ -776,7 +837,7 @@ function startAnim(locx, locy, clearDeadPieces) {
 	Xs = 0;
 	Ys = 0;
 	idx= 0;
-	intval = setInterval(function(){drawFrame(locx, locy, clearDeadPieces);},50);
+	intval = setInterval(function(){drawFrame(locx, locy, clearDeadPieces);},40);
 }
 
 function drawFrame(locx, locy, clearDeadPieces) {

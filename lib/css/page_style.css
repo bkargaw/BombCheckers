@@ -11,6 +11,14 @@
 
 }
 
+.backgroundColor{
+  display: flex;
+  flex-direction: column;
+
+}
+.backgroundColor canvas{
+  width: 100px;
+}
 
 /*
 modal stuff below
