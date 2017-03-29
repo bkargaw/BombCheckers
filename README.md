@@ -1,15 +1,16 @@
 # BombCheckers
-  [BombCheckers live]()
+  [BombCheckers live](https://bkargaw.github.io/BombCheckers/)
 
 ## Background
-  BombCheckers is inspired by the classic game of checkers but with a twist. The game will be played by two different players playing from the same machine. the twist on the classic game is that there will be three different piece types each player's side.  
+  BombCheckers is inspired by the classic game of checkers but with a twist. The game will be played by one player. the twist on the classic game is that there will be three different piece types on each player's side.  
 
 ### piece types
   1. classic checkers piece
   2. bomb checkers piece
   3. shield checkers piece
 
-  The back row will have the *classic* checker pieces. The second row will contain *bomb* pieces that move and behave like classic checker pieces but will explode when they capture the other players piece; during the aforementioned explosion any piece within one gird space from the explosion except shield pieces on any player's side will die form the explosion. The last pice type will be a *shield* piece which will move  and behave like classic piece but will be impervious to any explosion.
+  The back row will have the *classic* checker pieces. The second row will contain
+  *shield* piece which will move  and behave like classic piece but will be impervious to any explosion.The last pice type will be a *bomb* pieces that move and behave like classic checker pieces but will explode when it captures the other players piece; during the aforementioned explosion any piece within one gird space from the explosion except shield pieces on any player's side will die form the explosion.
 
 ## Functionality & MVP
 
@@ -18,7 +19,11 @@
   * Start, and reset the game board
   * Play the game and have it behave as described above
   * Will be able to pause and play music as needed
+<<<<<<< HEAD
   * Add ai
+=======
+  * add ai
+>>>>>>> 7b2a7df466709657ee1ef83cb04a4de568b76128
 
   In addition, this project will include:
 
@@ -49,13 +54,16 @@
       1. how to place images
       2. how to create a board
       3. how to host music and allow for easy user control
-    * find out hot to get a 2d explosion animation
+    * find out how to get a 2d explosion animation
     * create a basic board and place it on the canvas
     * create the skeleton needed to create all the classes needed to run the game
 
 ### day 2
-    * write all the classes needed for the game outline in the skeleton from day one
-      start with the piece classes, then the board then the game....
+    * write the board class which will
+      1. create the default placing of the pieces
+      2. define all the methods that check game logics
+    * write the piece class that will be the super class of bomb and shield pieces
+    * write the bomb and shield classes overwriting the needed methods
 ### day 3
     * finished any unfinished classes
     * create and add modal that explains the game rules
@@ -68,7 +76,10 @@
     * create a demo video
 
 # Bonus features
-  * option to choose from different piece styles
-  * rotate the board to allow the current players pieces to be closest to her/him
-  * be able to play from different machines (look at firebase)
   * Choose from different styling of the board (color of squares)
+  * be able to play from different machines (look at firebase)
+<<<<<<< HEAD
+  * Choose from different styling of the board (color of squares)
+=======
+  * enable both single and multiple player modes
+>>>>>>> 7b2a7df466709657ee1ef83cb04a4de568b76128
