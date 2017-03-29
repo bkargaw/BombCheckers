@@ -253,7 +253,7 @@ class Board {
    If (x, y) are out of bounds, returns null.
    */
   pieceAt( x, y){
-    if (!(this._isInbound())) return null;
+    if (!(this._isInbound(x, y))) return null;
     return this.pieces[x][y];
   }
 
@@ -277,7 +277,7 @@ class Board {
   appropriate message.
    */
   remove( x,  y) {
-    if ( !(this._isInbound())) return null;
+    if ( !(this._isInbound(x,  y))) return null;
     let piece = this.pieces[x][y];
     this.pieces[x][y] = null;
     return piece;
@@ -592,7 +592,7 @@ class ShieldPiece extends Piece {
     return WaterImg;
   }
 
-  blowUp( x, y) {
+  blowUp(x, y) {
     // does not blow up!!!
 	}
 
@@ -610,7 +610,9 @@ const Board = __webpack_require__(1);
 let c;
 let ctx;
 let board;
-
+let explosionSprite = new Image();
+var explosionSound = new Audio("asset/audio/Bomb_Exploding.mp3");
+explosionSprite.src = 'asset/images/explosion-sprite-sheet.png';
 $( ()=>{
   c = document.getElementById("canvas");
   c.width  = 600;
@@ -707,9 +709,10 @@ function ClickCallBack(event){
     if(board.canSelect(x,y)){
       ctx.clearRect(0,0,c.width, c.height);
       if (board.select(x,y)){
-        drawBackGround();
-        highlightPos(x, y);
-        drawThePieces();
+        let bombPiece= board.pieces[x][y];
+        board.endTurn();
+        bombPiece.explode(x,y);
+        startAnim((x * 75) - 75 , (y * 75) - 75);
       }else {
         drawBackGround();
         highlightPos(x, y);
@@ -726,7 +729,44 @@ function ClickCallBack(event){
 function endTurn(){
   if (board.canEndTurn()){
     board.endTurn();
+    drawBackGround();
+    drawThePieces();
   }
+}
+
+var Xs = 0;
+var Ys = 0;
+var w = 225;
+var h = 225;
+var frameCnt = 25;
+var idx = 0;
+var intval;
+function startAnim(locx, locy) {
+  drawBackGround();
+  drawThePieces();
+  explosionSound.play();
+	clearInterval(intval);
+	Xs = 0;
+	Ys = 0;
+	idx= 0;
+	intval = setInterval(function(){drawFrame(locx, locy);},50);
+}
+
+function drawFrame(locx, locy) {
+	ctx.drawImage(explosionSprite, Xs, Ys , 64, 64, locx, locy, w, h);
+	Xs += 64;
+	idx++;
+	if(idx % 5 === 0) {
+		Xs = 0;
+		Ys += 64;
+	}
+	if(idx>frameCnt){
+    clearInterval(intval);
+    drawBackGround();
+    drawThePieces();
+  }
+
+
 }
 
 
