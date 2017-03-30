@@ -1,12 +1,51 @@
 body {
   background-color: seashell;
   overflow: hidden;
-  width: 80%;
-  min-width: 800px;
-;
+  width: 100%;
+	margin: 0 auto;
+	font-family:  georgia,"times new roman",times,serif;
+	font-size: 12px;
 }
+
+header{
+  display: flex;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  background-color: antiquewhite;
+  border-bottom: 2px solid #949f4d;
+}
+header h1{
+  margin-left: 300px;
+  margin-right: 300px;
+}
+
+header button{
+  height: 40px;
+  border-color: #4d7b9f;
+	background-color: #6288a5;
+	color: white;
+	font-weight: bold;
+	padding: 7px 9px;
+	margin: 5px;
+	border-radius: 3px;
+	transition: background-color 0.3s;
+	font-family:  arial, helvetica, sans-serif;
+	text-transform: uppercase;
+	font-size: 11px;
+	text-align: center;
+}
+
+.GAME-holder{
+  display: flex;
+}
+
 #canvas{
   border: 8px solid rgb(160, 144, 3);
+  margin-top: 50px;
+  position: relative;
+  left: 33%;
+  /*
   padding: 0;
   margin: auto;
   display: block;
@@ -15,17 +54,27 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-
+  */
 }
 
 
 .backgroundBoardColor{
   display: flex;
   flex-direction: column;
-
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  margin: 0;
+  position: relative;
+  bottom: 600px;
+  left: 20%;
 }
 .backgroundBoardColor canvas{
   width: 100px;
+  margin-bottom: 40px;
+}
+.backgroundBoardColor canvas:hover{
+  border: 2px solid black;
 }
 
 /*
@@ -48,19 +97,31 @@ modal stuff below
 
 /* Modal Content */
 .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 65%;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  font-size: 20px;
+  background-color: antiquewhite;
+}
+.modal-content h3{
+  padding-left: 40%;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #949f4d;
+}
+.modal-content h4{
+  padding-left: 1%;
+}
+.modal-content ul li{
+  padding-bottom: 20px;
 }
 
 /* The Close Button */
 .close {
     color: #aaaaaa;
     float: right;
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 40px;
 }
 
 .close:hover,

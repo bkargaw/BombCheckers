@@ -188,6 +188,11 @@ class Board {
     this.color2 = color2;
   }
 
+  resetBackgroundColor(color1, color2){
+    this.color1 = color1;
+    this.color2 = color2;
+  }
+
   setBoardUp(){
     let grid = new Array(8);
     for (let i = 0 ; i< 8 ; i++){
@@ -843,7 +848,7 @@ $( ()=>{
   draw();
   c.addEventListener('click', handleClickFromUser);
   document.body.onkeyup = function(e){
-    if(e.keyCode === 32) endTurn();
+    if(e.keyCode === 32 || e.keyCode === 13) endTurn();
   };
   let reset = document.getElementById("resetGame");
   reset.addEventListener('click', resetGame);
@@ -851,7 +856,7 @@ $( ()=>{
 });
 
 function resetGame() {
-  board = new Board();
+  board = new Board(ctx, color1, color2);
   drawBackGround();
   drawThePieces();
 }
@@ -866,6 +871,7 @@ function ChengeBackgroundColor(col1, col2){
     }
     color1 = col1;
     color2 = col2;
+    board.resetBackgroundColor(color1, color2);
     drawBackGround();
     drawThePieces();
   };

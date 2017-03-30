@@ -11,18 +11,24 @@
 </head>
 
 <body>
-  <button id='resetGame'>Restart Game</button>
+  <header>
+    <button id="myBtn">Game Rules</button>
+      <h1>Bomb Checkers</h1>
+    <button id='resetGame'>Restart Game</button>
+  </header>
+
     <div id="GAME-holder">
       <canvas id='canvas'></canvas>
-      <div class='backgroundBoardColor'>
+      <aside class='backgroundBoardColor'>
+        <h3>Optional Background Color</h3>
         <canvas id='background1'></canvas>
         <canvas id='background2'></canvas>
         <canvas id='backgroundOrignal'></canvas>
-      </div>
+      </aside>
       <!-- Our sketch will go here! -->
     </div>
         <!-- Trigger/Open The Modal -->
-    <button id="myBtn">Game Rules</button>
+
     <!-- The Modal -->
     <div id="myModal" class="modal">
       <!-- Modal content -->
@@ -36,12 +42,13 @@
             <li>Bomb pieces will explode when they capture a piece; during the explosion any piece within one gird space will die</li>
             <li>Shield pieces behave like classic piece but will be impervious to any explosion.</li>
           </ul>
-        <h4>Moves<h4>
+        <h4>Moves</h4>
         <p>
-          - Mouse click to selet a piece or empty square (Note:- only need to select a piece once a turn)
-          <br/>
-          - Spacebar to end a trun
-          <br/>
+          - right Mouse click to selet a piece or empty square (Note:- only need to select a piece once a turn)
+        </p>
+          <p>
+          - press Spacebar or return to end a trun
+
         </p>
       </div>
 
