@@ -173,14 +173,19 @@ module.exports = Piece;
 const Piece = __webpack_require__(0);
 const BombPiece = __webpack_require__(2);
 const ShieldPiece = __webpack_require__(3);
+const ComputerPlayer = __webpack_require__(6);
 
 class Board {
-  constructor() {
+  constructor(ctx, color1, color2) {
     this.pieces = this.setBoardUp();
     this.current_player = 'blue';
     this.current_player_has_moved = false;
     this.current_player_has_selected = false;
     this.current_player_piece_pos = [];
+    this.cp = new ComputerPlayer(this);
+    this.ctx = ctx;
+    this.color1 = color1;
+    this.color2 = color2;
   }
 
   setBoardUp(){
@@ -319,7 +324,8 @@ class Board {
         // if the
         let pos = this.current_player_piece_pos;
         if(this.current_player_has_selected &&
-           !(this.pieces[pos[0]][pos[1]].haskilledthisturn)){
+           !(this.pieces[pos[0]][pos[1]].haskilledthisturn) &&
+            !(this.current_player_has_moved)){
             return this.validFirstMove(pos[0], pos[1], x, y);
         }
         if(this.current_player_has_selected &&
@@ -366,13 +372,19 @@ class Board {
     let deltY = finy - inty;
     if(Math.abs(deltX) === 2 && Math.abs(deltY) === 2){
       let piece = this.pieces[intx][inty];
-      if (piece.isKing){
-        // this means the piece is a king
-        return true;
-      }else{
-        if (piece.side === 'red' && deltY === 2) return true;
-        if (piece.side === 'blue' && deltY === -2) return true;
+      let xjumped = intx + deltX/2;
+      let yjumped = inty + deltY/2;
+      let killPiece = this.pieces[xjumped][yjumped];
+      if(killPiece && killPiece.side !== this.current_player){
+        if (piece.isKing){
+          // this means the piece is a king
+          return true;
+        }else{
+          if (piece.side === 'red' && deltY === 2) return true;
+          if (piece.side === 'blue' && deltY === -2) return true;
+        }
       }
+
     }
     return false;
   }
@@ -464,6 +476,93 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
     this.current_player_has_moved = false;
     this.current_player_has_selected = false;
     this.current_player_piece_pos = [];
+    if(this.current_player === 'red' && this.current_player_has_selected){
+      this.runComputersTurn();
+    }
+  }
+
+  runComputersTurn(){
+    let pos = this.cp.makeMove();
+    if(pos && this.canSelect(...pos)){
+      this.select(...pos);
+      pos = this.cp.makeMove();
+      if(pos && this.canSelect(...pos)){
+        this.select(...pos);
+        if(this.current_player_has_moved){
+          this.drawBackGround();
+          this.drawThePieces();
+          this.runComputersTurn();
+        }
+      }else if (pos ==='recallFirstMove'){
+          this.runComputersTurn();
+      }else{
+        this.endTurn();
+        this.cp.resetValues();
+      }
+    }else if(this.canEndTurn()) {
+      this.endTurn();
+      this.cp.resetValues();
+    }else{
+      console.log('computer_player failed');
+    }
+  }
+
+  drawBackGround() {
+    let colors = this._createColorForGrid();
+    for (let i = 0 ; i < 8; i++){
+      for (let j = 0 ; j < 8; j++){
+        let x = i * 75 ;
+        let y = j * 75;
+        this.ctx.beginPath();
+        this.ctx.rect(x, y, 75, 75);
+        this.ctx.fillStyle = colors[i][j];
+        this.ctx.fill();
+      }
+    }
+  }
+
+   _createColorForGrid(){
+    let colorGrid = new Array(8);
+    let fillbox = true;
+    for (let i = 0 ; i < 8; i++) {
+      colorGrid[i] = new Array(8);
+      for (let j = 0 ; j < 8; j++) {
+        if (fillbox){
+          colorGrid[i][j] = this.color1;
+        }else{
+          colorGrid[i][j] = this.color2;
+        }
+        fillbox = !fillbox;
+      }
+      fillbox = !fillbox;
+    }
+    return colorGrid;
+  }
+
+
+
+  drawThePieces(){
+    let piece;
+    let scale = 75;
+    for (let i = 0; i < 8 ; i++){
+      for(let j = 0; j < 8 ; j++){
+        piece = this.pieces[i][j];
+        if( piece ){
+          let scaledX = piece.x;
+          let scaledY = piece.y;
+          let img = piece.getImage();
+          if(img.complete) { //check if image was already loaded by the browser
+            this.drawAPiece(img, piece.x , piece.y, scale);
+          }else {
+            img.onload = ()=> this.drawAPiece(img, scaledX , scaledY, scale);
+          }
+        }
+      }
+    }
+  }
+
+  drawAPiece(baseImage, x , y, scale){
+    this.ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
   }
 
   /*
@@ -610,8 +709,11 @@ module.exports = ShieldPiece;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawBackGround", function() { return drawBackGround; });
 const Board = __webpack_require__(1);
 
 let c;
@@ -638,10 +740,12 @@ $( ()=>{
   c.width  = 600;
   c.height = 600;
   ctx = c.getContext("2d");
-  board = new Board();
+
+
   //default board colors
   color1 = 'gray';
   color2 = 'red';
+  board = new Board(ctx, color1, color2);
 
   // background option canvas 2
   cBackGround2 = document.getElementById("background2");
@@ -668,7 +772,7 @@ $( ()=>{
   draw();
   c.addEventListener('click', handleClickFromUser);
   document.body.onkeyup = function(e){
-    if(e.keyCode == 32) endTurn();
+    if(e.keyCode === 32) endTurn();
   };
   let reset = document.getElementById("resetGame");
   reset.addEventListener('click', resetGame);
@@ -686,6 +790,8 @@ function ChengeBackgroundColor(col1, col2){
     if(col1 === 'rgb(68, 62, 62)'){
       // change highlighter if the board is black and white
       highlightColor = 'rgb(210, 103, 224)';
+    }else {
+        highlightColor = 'white';
     }
     color1 = col1;
     color2 = col2;
@@ -797,7 +903,8 @@ function handleClickFromUser(event){
         let bombPiece= board.pieces[x][y];
         board.endTurn();
         let clearDeadPieces = () => bombPiece.explode(x,y);
-        startAnim((x * 75) - 90 , (y * 75) - 90, clearDeadPieces);
+        let moveComputer = () => board.runComputersTurn();
+        startAnim((x * 75) - 90 , (y * 75) - 90, clearDeadPieces, moveComputer);
       }else {
         drawBackGround();
         highlightPos(x, y);
@@ -821,6 +928,7 @@ function endTurn(){
       board.endTurn();
       drawBackGround();
       drawThePieces();
+      board.runComputersTurn();
     }
   }
 }
@@ -835,7 +943,7 @@ var h = 240;
 var frameCnt = 25;
 var idx = 0;
 var intval;
-function startAnim(locx, locy, clearDeadPieces) {
+function startAnim(locx, locy, clearDeadPieces, moveComputer) {
   drawBackGround();
   drawThePieces();
   explosionSound.play();
@@ -843,22 +951,24 @@ function startAnim(locx, locy, clearDeadPieces) {
 	Xs = 0;
 	Ys = 0;
 	idx= 0;
-	intval = setInterval(function(){drawFrame(locx, locy, clearDeadPieces);},40);
+intval = setInterval(function(){drawFrame(locx, locy,
+  clearDeadPieces, moveComputer);},60);
 }
 
-function drawFrame(locx, locy, clearDeadPieces) {
+function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
 	ctx.drawImage(explosionSprite, Xs, Ys , 64, 64, locx, locy, w, h);
 	Xs += 64;
 	idx++;
 	if(idx % 5 === 0) {
 		Xs = 0;
-    clearDeadPieces();
 		Ys += 64;
 	}
 	if(idx > frameCnt){
     clearInterval(intval);
+    clearDeadPieces();
     drawBackGround();
     drawThePieces();
+    moveComputer();
   }
 }
 
@@ -888,6 +998,94 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 };
+
+
+
+
+/***/ }),
+/* 5 */,
+/* 6 */
+/***/ (function(module, exports) {
+
+
+class ComputerPlayer {
+  constructor(board, side = 'red') {
+    this.board = board;
+    this.side = side;
+    this.firstMove = [];
+    this.myPieces = [];
+  }
+
+  makeMove(){
+    if(this.firstMove.length){
+      return this.makeSecondMove();
+    }else {
+      this.firstMove = [];
+      return this.makeFirstMove();
+    }
+  }
+
+  makeFirstMove(){
+    if (!this.myPieces.length)  this.myPieces = this.getMyPieces();
+    this.myPieces.sort(compare);
+    function compare(a, b) {
+      if (a.y > b.y) {
+        return -1;
+      }
+      if (a.y < b.y) {
+        return 1;
+      }
+      return 0;
+    }
+    for(let i = 0; i < this.myPieces.length; i++){
+      let x = this.myPieces[i].x;
+      let y = this.myPieces[i].y;
+      if (this.board.canSelect(x, y)){
+        this.firstMove = [x,y];
+        return [x, y];
+      }else{
+        this.myPieces.shift();
+      }
+    }
+    return null;
+  }
+
+  makeSecondMove(){
+    let optionDelta = [[ 2 , 2], [-2, 2],
+                       [ 1 , 1], [-1, 1]];
+    // let optionDelta = [[ 2 , 2], [-2, 2],[ 2 , -2], [-2, -2],
+    //                    [ 1 , 1], [-1, 1], [ 1 , -1], [-1, -1]];
+    for (let i = 0 ; i < optionDelta.length; i++){
+      let x = this.firstMove[0] + optionDelta[i][0];
+      let y = this.firstMove[1] + optionDelta[i][1];
+      if (this.board.canSelect(x, y)){
+        this.firstMove = [x,y];
+        return [x, y];
+      }
+    }
+    this.myPieces.shift();
+    this.firstMove = [];
+    return 'recallFirstMove';
+  }
+
+  getMyPieces(){
+    let myPieces = [];
+    for(let i = 0; i < 8; i++ ){
+      for(let j = 0; j < 8; j++){
+        let piece = this.board.pieces[i][j];
+        if (piece && piece.side === this.side) myPieces.push(piece);
+      }
+    }
+    return myPieces;
+  }
+
+  resetValues(){
+    this.firstMove = [];
+    this.myPieces = [];
+  }
+}
+
+module.exports = ComputerPlayer;
 
 
 /***/ })

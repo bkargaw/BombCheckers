@@ -1,3 +1,10 @@
+body {
+  background-color: seashell;
+  overflow: hidden;
+  width: 80%;
+  min-width: 800px;
+;
+}
 #canvas{
   border: 8px solid rgb(160, 144, 3);
   padding: 0;
@@ -11,12 +18,13 @@
 
 }
 
-.backgroundColor{
+
+.backgroundBoardColor{
   display: flex;
   flex-direction: column;
 
 }
-.backgroundColor canvas{
+.backgroundBoardColor canvas{
   width: 100px;
 }
 
