@@ -491,7 +491,8 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   }
 
   runComputersTurn(){
-    this.cp.makeMove();
+    let that = this;
+    setTimeout(function(){ that.cp.makeMove();}, 500);
   }
 
   drawBackGround() {
@@ -656,7 +657,6 @@ class BombPiece extends Piece {
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
-
 
 class ComputerPlayer {
   constructor(board, side = 'red') {
