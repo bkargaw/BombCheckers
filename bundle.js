@@ -659,8 +659,8 @@ class ComputerPlayer {
     this.side = side;
     this.Moves = [];
     this.myPieces = [];
-    this.optionDelta =[[ 2 , 2], [-2, 2],[ 2 , -2], [-2, -2],
-                       [ 1 , 1], [-1, 1], [ 1 , -1], [-1, -1]];
+    this.optionDelta =[[ 2 , -2], [-2, -2],[ 2 , 2], [-2, 2],
+                       [ 1 , -1], [-1, -1],[ 1 , 1], [-1, 1]];
   }
 
   makeMove(){
