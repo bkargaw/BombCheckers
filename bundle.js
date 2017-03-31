@@ -854,7 +854,11 @@ function pleaseStopExplosion() {
 }
 
 function pleaseStopmusic() {
-  music.pause();
+  if (!music.paused){
+    music.pause();
+  }else {
+    music.play();
+  }
 }
 
 function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
@@ -908,7 +912,7 @@ $( ()=>{
   cBackGroundOriginal.height = 100;
   cBackGroundOriginalCtx = cBackGroundOriginal.getContext("2d");
   cBackGroundOriginal.addEventListener('click',
-        ChengeBackgroundColor('gray', 'red'));
+        ChengeBackgroundColor('rgb(173, 168, 168)', 'red'));
   draw();
   c.addEventListener('click', handleClickFromUser);
   document.body.onkeyup = function(e){
