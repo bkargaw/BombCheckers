@@ -30,7 +30,7 @@
 ## Wireframes
   The app will be a single page app the will allow the user to interact with the game as well as allow them to style the board, toggle music on and off, and toggle the game rules modal on and off. The page will also have a link to a video that show the basic game play that will serve as an alternative or supplementary to the game rules modal.
 
-![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Wireframes/BombChecker.png)
+![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/wireframes/BombChecker.png)
 
 ## Architecture and Technologies
   * js for game logic
