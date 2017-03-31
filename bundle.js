@@ -825,6 +825,7 @@ let highlightColor = 'white';
 let explosionSprite = new Image();
 explosionSprite.src = 'asset/images/explosion-sprite-sheet.png';
 var explosionSound = new Audio("asset/audio/Bomb_Exploding.mp3");
+var music = new Audio("asset/audio/music.mp3");
 var stopExplosion = false;
 
 // below this is the logic for the explosion rendering
@@ -850,6 +851,10 @@ intval = setInterval(function(){drawFrame(locx, locy,
 
 function pleaseStopExplosion() {
   stopExplosion = !stopExplosion;
+}
+
+function pleaseStopmusic() {
+  music.pause();
 }
 
 function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
@@ -916,8 +921,10 @@ $( ()=>{
   let stopbomb = document.getElementById("StopBombAduio");
   stopbomb.addEventListener('click', pleaseStopExplosion);
 
+  let stopMusic = document.getElementById("StopMusic");
+  stopMusic.addEventListener('click', pleaseStopmusic);
+  music.play();
   drawTheBackgroundOptions();
-
 });
 
 function resetGame() {
