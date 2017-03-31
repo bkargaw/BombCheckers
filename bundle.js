@@ -172,7 +172,7 @@ const ShieldPiece = __webpack_require__(4);
 const ComputerPlayer = __webpack_require__(3);
 
 class Board {
-  constructor(ctx, color1, color2,startAnim, drawFrame) {
+  constructor(ctx, color1, color2,startAnim, drawFrame,towPlayer) {
     this.pieces = this.setBoardUp();
     this.current_player = 'blue';
     this.current_player_has_moved = false;
@@ -184,6 +184,11 @@ class Board {
     this.color2 = color2;
     this.startAnim = startAnim;
     this.drawFrame = drawFrame;
+    this.towPlayer= towPlayer;
+  }
+
+  makeTowPlayer(){
+    this.towPlayer = !this.towPlayer;
   }
 
   resetBackgroundColor(color1, color2){
@@ -489,20 +494,22 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
   }
 
   runComputersTurn(){
-    let that = this;
-    let val;
-    setTimeout(function(){
-      val = that.cp.makeMove();
-      if (val){
-        let [x, y] = that.current_player_piece_pos;
-        let bombPiece = that.pieces[x][y];
-        let clearDeadPieces = () => bombPiece.explode(x,y);
-        let moveComputer = () => {};
-        that.startAnim((x * 75) - 90 , (y * 75) - 90,
-                      clearDeadPieces, moveComputer);
-        that.endTurn();
-      }
+    if (!this.towPlayer){
+      let that = this;
+      let val;
+      setTimeout(function(){
+        val = that.cp.makeMove();
+        if (val){
+          let [x, y] = that.current_player_piece_pos;
+          let bombPiece = that.pieces[x][y];
+          let clearDeadPieces = () => bombPiece.explode(x,y);
+          let moveComputer = () => {};
+          that.startAnim((x * 75) - 90 , (y * 75) - 90,
+          clearDeadPieces, moveComputer);
+          that.endTurn();
+        }
       }, 500);
+    }
 
   }
 
@@ -822,6 +829,8 @@ let cBackGroundOriginalCtx;
 
 let highlightColor = 'white';
 
+let towPlayer = false;
+
 let explosionSprite = new Image();
 explosionSprite.src = 'asset/images/explosion-sprite-sheet.png';
 var explosionSound = new Audio("asset/audio/Bomb_Exploding.mp3");
@@ -888,7 +897,7 @@ $( ()=>{
   //default board colors
   color1 = 'gray';
   color2 = 'red';
-  board = new Board(ctx, color1, color2, startAnim, drawFrame);
+  board = new Board(ctx, color1, color2, startAnim, drawFrame, towPlayer);
 
   // background option canvas 2
   cBackGround2 = document.getElementById("background2");
@@ -927,6 +936,10 @@ $( ()=>{
 
   let stopMusic = document.getElementById("StopMusic");
   stopMusic.addEventListener('click', pleaseStopmusic);
+
+  let makeToPlayer = document.getElementById("twoplayerMode");
+  makeToPlayer.addEventListener('click', ()=> board.makeTowPlayer());
+
   music.play();
   drawTheBackgroundOptions();
 });

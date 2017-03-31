@@ -9,16 +9,16 @@ body {
 
 header{
   display: flex;
-  padding: 20px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   background-color: antiquewhite;
   border-bottom: 2px solid #949f4d;
+  padding: 0 30px;
 }
 header h1{
-  margin-left: 300px;
-  margin-right: 300px;
   font-size: 34px;
+  position: relative;
+  left: 60px;
 }
 
 button{
@@ -34,7 +34,13 @@ button{
 	font-family:  fantasy, helvetica, sans-serif;
 	text-transform: uppercase;
 	font-size: 15px;
+  padding-left: 10px;
 	text-align: center;
+}
+
+button:hover{
+  background-color: #326891;;
+  border-color:#265e8b;
 }
 
 .GAME-holder{
@@ -43,9 +49,9 @@ button{
 
 #canvas{
   border: 8px solid rgb(160, 144, 3);
-  margin-top: 100px;
+  margin-top: 25px;
   position: relative;
-  left: 33%;
+  left: 28%;
   /*
   padding: 0;
   margin: auto;
@@ -68,7 +74,7 @@ button{
   margin: 0;
   position: relative;
   bottom: 600px;
-  left: 17%;
+  left: 12%;
 }
 .backgroundBoardColor h3{
   font-size: 21px;
@@ -88,10 +94,21 @@ button{
 .controlAudio{
   display: flex;
   flex-direction: column;
-  position: relative;
-  bottom: 100%;
-  left: 72%
+  position:relative;
+  top: -1000px;
+  left: 75%;
 }
+
+@media (min-width:1600px) {
+
+  /* your conditional / responsive CSS inside this condition */
+  .controlAudio {
+    position:relative;
+    top: -1000px;
+    left: 74%;
+  }
+}
+
 
 
 .controlAudio button{
