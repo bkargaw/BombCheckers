@@ -490,6 +490,8 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
     this.current_player_piece_pos = [];
     if(this.current_player === 'red' && this.current_player_has_selected){
       this.runComputersTurn();
+    }else{
+      this.upDateCurrentUserInfor();
     }
   }
 
@@ -508,8 +510,16 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
           clearDeadPieces, moveComputer);
           that.endTurn();
         }
+
       }, 500);
     }
+  }
+
+
+  upDateCurrentUserInfor(){
+    document.getElementById('infoToTheUser').innerHTML
+    =`It is <strong>${this.current_player.toUpperCase()}'s</strong> turn,<br/> press space to end turn`;
+
 
   }
 
@@ -939,9 +949,8 @@ $( ()=>{
 
   let makeToPlayer = document.getElementById("twoplayerMode");
   makeToPlayer.addEventListener('click', ()=> board.makeTowPlayer());
-
-  music.play();
   drawTheBackgroundOptions();
+  board.upDateCurrentUserInfor();
 });
 
 function resetGame() {
@@ -964,6 +973,7 @@ function ChengeBackgroundColor(col1, col2){
     drawBackGround();
     drawThePieces();
   };
+
 }
 
 
@@ -1078,8 +1088,7 @@ function handleClickFromUser(event){
       }
 
     }else {
-      console.log('can not select that space');
-      console.log([x,y]);
+      tellUserError('Invalid move',200,300);
     }
   }
 }
@@ -1090,14 +1099,32 @@ function endTurn(){
     if (winner){
       // add a dialog on the page that tells the user the game is over
       ctx.font = "30px Arial";
-      ctx.fillText(`the winner is ${winner}`,250,100);
+      tellUserError(`the winner is ${winner}`,150, 300,10000);
     }else{
       board.endTurn();
       drawBackGround();
       drawThePieces();
       board.runComputersTurn();
+
     }
+  }else{
+    tellUserError('Please make a move first',140,300);
   }
+}
+
+function tellUserError(msg ,x, y, time = 1000) {
+  var gradient=ctx.createLinearGradient(0,0,c.width,0);
+  gradient.addColorStop("0","purple");
+  gradient.addColorStop("0.5","black");
+  gradient.addColorStop("1.0","purple");
+
+  ctx.font = "30px Arial";
+  ctx.fillStyle=gradient;
+  ctx.fillText(msg,x,y);
+  setTimeout(function(){
+    drawBackGround();
+    drawThePieces();
+  }, time);
 }
 
 
