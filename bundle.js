@@ -93,10 +93,6 @@ class Piece {
     return this.board;
 	}
 
-  setHaskilledthisturn(haskilledthisturn) {
-		this.haskilledthisturn = haskilledthisturn;
-  }
-
   setKing(isKing) {
 		this.isKing = isKing;
 	}
@@ -176,7 +172,7 @@ const ShieldPiece = __webpack_require__(4);
 const ComputerPlayer = __webpack_require__(3);
 
 class Board {
-  constructor(ctx, color1, color2) {
+  constructor(ctx, color1, color2,startAnim, drawFrame) {
     this.pieces = this.setBoardUp();
     this.current_player = 'blue';
     this.current_player_has_moved = false;
@@ -186,6 +182,8 @@ class Board {
     this.ctx = ctx;
     this.color1 = color1;
     this.color2 = color2;
+    this.startAnim = startAnim;
+    this.drawFrame = drawFrame;
   }
 
   resetBackgroundColor(color1, color2){
@@ -492,7 +490,20 @@ Selects the square at (x, y). This method assumes canSelect (x,y) returns true.
 
   runComputersTurn(){
     let that = this;
-    setTimeout(function(){ that.cp.makeMove();}, 500);
+    let val;
+    setTimeout(function(){
+      val = that.cp.makeMove();
+      if (val){
+        let [x, y] = that.current_player_piece_pos;
+        let bombPiece = that.pieces[x][y];
+        let clearDeadPieces = () => bombPiece.explode(x,y);
+        let moveComputer = () => {};
+        that.startAnim((x * 75) - 90 , (y * 75) - 90,
+                      clearDeadPieces, moveComputer);
+        that.endTurn();
+      }
+      }, 500);
+
   }
 
   drawBackGround() {
@@ -645,12 +656,7 @@ class BombPiece extends Piece {
 				  }
 			  }
 		}
-
-  startCapturing() {
-     // since they explode and can't capture again...
-		this.setHaskilledthisturn(false);
-		}
-	}
+}
   module.exports = BombPiece;
 
 
@@ -670,14 +676,19 @@ class ComputerPlayer {
 
   makeMove(){
     this.SelecePieceToMove();
-    this.findAllMoves();
-    if (this.Moves.length >= 2){
+    let val = this.findAllMoves();
+    if (val){
       this.resetValues();
-      this.board.endTurn();
-    }else {
-      this.myPieces.shift();
-      this.Moves = [];
-      this.makeMove();
+      return val;
+    }else{
+      if (this.Moves.length >= 2){
+        this.resetValues();
+        this.board.endTurn();
+      }else {
+        this.myPieces.shift();
+        this.Moves = [];
+        this.makeMove();
+      }
     }
   }
 
@@ -707,6 +718,10 @@ class ComputerPlayer {
           && this.board.pieces[x][y] === null){
         this.board.select(x,y);
         this.Moves.push([x,y]);
+        let piece = this.board.pieces[x][y];
+        if (piece.Piecetype === 'bomb' && piece.haskilledthisturn){
+          return 'explode';
+        }
       }
     }
   }
@@ -731,7 +746,6 @@ class ComputerPlayer {
    }
    return 0;
  }
-
 
   resetValues(){
     this.Moves = [];
@@ -811,6 +825,50 @@ let highlightColor = 'white';
 let explosionSprite = new Image();
 explosionSprite.src = 'asset/images/explosion-sprite-sheet.png';
 var explosionSound = new Audio("asset/audio/Bomb_Exploding.mp3");
+var stopExplosion = false;
+
+// below this is the logic for the explosion rendering
+
+var Xs = 0;
+var Ys = 0;
+var w = 240;
+var h = 240;
+var frameCnt = 25;
+var idx = 0;
+var intval;
+function startAnim(locx, locy, clearDeadPieces, moveComputer) {
+  drawBackGround();
+  drawThePieces();
+  if(!stopExplosion) explosionSound.play();
+	clearInterval(intval);
+	Xs = 0;
+	Ys = 0;
+	idx= 0;
+intval = setInterval(function(){drawFrame(locx, locy,
+  clearDeadPieces, moveComputer);},60);
+}
+
+function pleaseStopExplosion() {
+  stopExplosion = !stopExplosion;
+}
+
+function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
+	ctx.drawImage(explosionSprite, Xs, Ys , 64, 64, locx, locy, w, h);
+	Xs += 64;
+	idx++;
+	if(idx % 5 === 0) {
+		Xs = 0;
+		Ys += 64;
+	}
+	if(idx > frameCnt){
+    clearInterval(intval);
+    clearDeadPieces();
+    drawBackGround();
+    drawThePieces();
+    moveComputer();
+  }
+}
+
 $( ()=>{
   c = document.getElementById("canvas");
   c.width  = 600;
@@ -821,7 +879,7 @@ $( ()=>{
   //default board colors
   color1 = 'gray';
   color2 = 'red';
-  board = new Board(ctx, color1, color2);
+  board = new Board(ctx, color1, color2, startAnim, drawFrame);
 
   // background option canvas 2
   cBackGround2 = document.getElementById("background2");
@@ -838,6 +896,7 @@ $( ()=>{
   cBackGround1Ctx1 = cBackGround1.getContext("2d");
   cBackGround1.addEventListener('click',
         ChengeBackgroundColor('rgb(68, 62, 62)', 'white'));
+
   // background option canvas original
   cBackGroundOriginal = document.getElementById("backgroundOrignal");
   cBackGroundOriginal.width  = 100;
@@ -853,6 +912,12 @@ $( ()=>{
   let reset = document.getElementById("resetGame");
   reset.addEventListener('click', resetGame);
   drawTheBackgroundOptions();
+
+  let stopbomb = document.getElementById("StopBombAduio");
+  stopbomb.addEventListener('click', pleaseStopExplosion);
+
+  drawTheBackgroundOptions();
+
 });
 
 function resetGame() {
@@ -935,14 +1000,14 @@ function ChengeBackgroundColor(col1, col2){
     }
   }
 
-  function highlightPos(i, j){
-    let x = i * 75 ;
-    let y = j * 75;
-    ctx.beginPath();
-    ctx.rect(x, y, 75, 75);
-    ctx.fillStyle = highlightColor;
-    ctx.fill();
-  }
+function highlightPos(i, j){
+  let x = i * 75 ;
+  let y = j * 75;
+  ctx.beginPath();
+  ctx.rect(x, y, 75, 75);
+  ctx.fillStyle = highlightColor;
+  ctx.fill();
+}
 
 function drawAPiece(baseImage, x , y, scale){
   ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
@@ -972,8 +1037,8 @@ function _isInbound(x, y){
 }
 
 function handleClickFromUser(event){
-  let x = Math.floor(event.layerX/ 75);
-  let y = Math.floor(event.layerY/ 75);
+  let x = Math.floor(event.layerX / 75);
+  let y = Math.floor(event.layerY / 75);
   if (_isInbound(x,y)){
     if(board.canSelect(x,y)){
       if (board.select(x,y)){
@@ -1000,7 +1065,8 @@ function endTurn(){
     let winner = board.winner();
     if (winner){
       // add a dialog on the page that tells the user the game is over
-      console.log(`the winner is ${winner}`);
+      ctx.font = "30px Arial";
+      ctx.fillText(`the winner is ${winner}`,250,100);
     }else{
       board.endTurn();
       drawBackGround();
@@ -1011,43 +1077,7 @@ function endTurn(){
 }
 
 
-// below this is the logic for the explosion rendering
 
-var Xs = 0;
-var Ys = 0;
-var w = 240;
-var h = 240;
-var frameCnt = 25;
-var idx = 0;
-var intval;
-function startAnim(locx, locy, clearDeadPieces, moveComputer) {
-  drawBackGround();
-  drawThePieces();
-  explosionSound.play();
-	clearInterval(intval);
-	Xs = 0;
-	Ys = 0;
-	idx= 0;
-intval = setInterval(function(){drawFrame(locx, locy,
-  clearDeadPieces, moveComputer);},60);
-}
-
-function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
-	ctx.drawImage(explosionSprite, Xs, Ys , 64, 64, locx, locy, w, h);
-	Xs += 64;
-	idx++;
-	if(idx % 5 === 0) {
-		Xs = 0;
-		Ys += 64;
-	}
-	if(idx > frameCnt){
-    clearInterval(intval);
-    clearDeadPieces();
-    drawBackGround();
-    drawThePieces();
-    moveComputer();
-  }
-}
 
 // create modal containt
 // Get the modal
