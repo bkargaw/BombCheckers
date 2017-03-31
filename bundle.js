@@ -1113,18 +1113,21 @@ function endTurn(){
 }
 
 function tellUserError(msg ,x, y, time = 1000) {
-  var gradient=ctx.createLinearGradient(0,0,c.width,0);
-  gradient.addColorStop("0","purple");
-  gradient.addColorStop("0.5","black");
-  gradient.addColorStop("1.0","purple");
+  if (!towPlayer || board.current_player === 'blue' ){
+    var gradient=ctx.createLinearGradient(0,0,c.width,0);
+    gradient.addColorStop("0","purple");
+    gradient.addColorStop("0.5","black");
+    gradient.addColorStop("1.0","purple");
 
-  ctx.font = "30px Arial";
-  ctx.fillStyle=gradient;
-  ctx.fillText(msg,x,y);
-  setTimeout(function(){
-    drawBackGround();
-    drawThePieces();
-  }, time);
+    ctx.font = "30px Arial";
+    ctx.fillStyle=gradient;
+    ctx.fillText(msg,x,y);
+    setTimeout(function(){
+      drawBackGround();
+      drawThePieces();
+    }, time);
+  }
+
 }
 
 
