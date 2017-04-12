@@ -16,7 +16,7 @@
       <h1>Bomb Checkers</h1>
     <div>
       <button id='resetGame'>Restart Game</button>
-      <button id='twoplayerMode'>CPU on/off</button>
+      <button id='optionsBtn'>Options</button>
     </div>
   </header>
 
@@ -31,24 +31,36 @@
       </aside>
       <!-- Our sketch will go here! -->
     </div>
-    <aside class='controlAudio'>
-      <div id='infoToTheUserHolder'>
+    <aside class='infoToTheUser'>
         <p id='infoToTheUser'>tell stuff</p>
-      </div>
-      <button id='StopBombAduio'>Bomb Aduio on/off</button>
-
-      <button id='StopMusic'>Music on/off</button>
     </aside>
         <!-- Trigger/Open The Modal -->
-
+    <div id='optionsModal' class="modal">
+      <div class="modal-content optionsModal">
+        <span class="close optionsModalclose">&times;</span>
+        <h4>Game Options</h4>
+        <div class='optionsModalLayout'>
+            <div class='optionsModalLayoutTitle'>
+              <h6>Game Mode</h6>
+              <h6>Music</h6>
+              <h6>Bomb Aduio</h6>
+            </div>
+            <div class='optionsModalLayoutButtons'>
+              <button id='twoplayerMode'>Single Player</button>
+              <button id='StopMusic'>off</button>
+              <button id='StopBombAduio'>on</button>
+            </div>
+        </div>
+      </div>
+    </div>
     <!-- The Modal -->
     <div id="myModal" class="modal">
       <!-- Modal content -->
       <div class="modal-content">
         <span class="close">&times;</span>
           <h3>Game Rules</h3>
-          The game is the same as regular checkers with a couple of
-           twists... all pieces behave like classic checker piece but with the following exceptions:
+          <div class="modal-body">
+          The game is the same as regular checkers and all pieces behave like classic checker pieces with the following exceptions:
            <br/>
           <ul>
             <li>Bomb pieces will explode when they capture a piece; during the explosion any piece within one grid space will die.</li>
@@ -56,12 +68,12 @@
           </ul>
         <h4>Moves</h4>
         <p>
-          - right Mouse click to select a piece or empty square (Note:- only need to select a piece once a turn)
+          * Left mouse click to select a piece or empty square (Note:- only need to select a piece once a turn)
         </p>
           <p>
-          - press spacebar or return to end a turn
-
+          * Press spacebar or return to end a turn
         </p>
+      </div>
       </div>
 
     </div>

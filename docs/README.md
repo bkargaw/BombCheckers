@@ -1,28 +1,77 @@
 # BombCheckers
-[BombCheckers live](https://bkargaw.github.io/BombCheckers/)
+  [BombCheckers live](https://bkargaw.github.io/BombCheckers/)
 
-### Tools Used
-  javaScript - front-end coding language
-  HTML5 & CSS3 - site styling
-  github - online repository
-  github pages - live site host
+## Background
+  BombCheckers is inspired by the classic game of checkers but with a twist. The game will be played by one player. the twist on the classic game is that there will be three different piece types on each player's side.  
 
-### Features & Implementation
+### piece types
+  1. classic checkers piece
+  2. bomb checkers piece
+  3. shield checkers piece
 
-#### UI
-  The user interface was implemented using click event listener on the canvas and mapping the pix location of the click to grid index that represents the location of the space on the canvas. From there the game checks game checks it the click event is valid input to the game and changes the state of the game based on the current state of the game. After the change has been made the game will render the changed state or will render and error of the input was not a valid input.
+  The back row will have the *classic* checker pieces. The second row will contain
+  *shield* piece which will move  and behave like classic piece but will be impervious to any explosion.The last pice type will be a *bomb* pieces that move and behave like classic checker pieces but will explode when it captures the other players piece; during the aforementioned explosion any piece within one gird space from the explosion except shield pieces on any player's side will die form the explosion.
+
+## Functionality & MVP
+
+  BombCheckers will allow the use  to:
+
+  * Start, and reset the game board
+  * Play the game and have it behave as described above
+  * Will be able to pause and play music as needed
+  * add ai
+
+  In addition, this project will include:
+
+  * An About modal describing the background and rules of the game
+  * A production Readme
 
 
-#### explosion animation
-  The explosion animation was created spite image overlaying. At the event of an explosion the game will figure out where the explosion should take place by converting grid location to pix values. Then the game will grab the already loaded explosion sprite image and loops over the sequence of explosion images and renders them on the canvas on top off each other at 16.5 frames per second. After that the back ground and pieces are redrawn and regular play continues.
+## Wireframes
+  The app will be a single page app the will allow the user to interact with the game as well as allow them to style the board, toggle music on and off, and toggle the game rules modal on and off. The page will also have a link to a video that show the basic game play that will serve as an alternative or supplementary to the game rules modal.
 
-#### computer player
-  The current computer player is a crowed implementation of a game ai. It first loops trough all its pieces and select all the ones that can move this turn. Then it sorts them based on which on is the most advanced and tries to see if that piece can capture this turn, if not checks if that piece which directions are possible to move then it choose that move. The allow for the game play agains a computer but it is not ideal. note: further improvements are in the works.
+![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/wireframes/BombChecker.png)
 
-### Future Directions for the Project
-##### objective: allow 2 player mode to be played from different machines
-    1. look into firebase in order to implement this feature
-##### objective: create a better computer player
-    1. use game tree logic in order to better Choose a better turn
-    2. guarantee at worst a tie for the computer.
-    3. allow the user to choose the level of the computer player (changes how deep the game three will be)
+## Architecture and Technologies
+  * js for game logic
+  * p5.js for creating graphics(p5.dom) and hosting audio(p5.sound)
+##### Main scripts in the app
+  * game.js  - This script will be responsible to organizing the turns and making high level decisions like check if the game is over, who whose turn it is  and getting the user input.
+  * board.js - This will be responsible on hosting all the pieces, creating the board layout and style, and handeling logic like move a piece, check if a move is valid and so on...
+  * pieces.js - this will be the default piece object class and will hold all the properties of a classic checkers piece and will act like the super class to the other piece classes
+  * bombpiece.js - this will be a class that holds properties and functions that only apply to bomb pieces (sub-class of piece)
+  * shieldpiece.js - this will be a class that holds properties and functions that only apply to shield piece (sub-class of piece)
+
+## Implementation Timeline
+
+### day 1
+    * learn how to use the canvas element from HTML5
+    * learn the p5 Library and find important method that will aid in the creation of the game, sound and modals  
+      1. how to place images
+      2. how to create a board
+      3. how to host music and allow for easy user control
+    * find out how to get a 2d explosion animation
+    * create a basic board and place it on the canvas
+    * create the skeleton needed to create all the classes needed to run the game
+
+### day 2
+    * write the board class which will
+      1. create the default placing of the pieces
+      2. define all the methods that check game logics
+    * write the piece class that will be the super class of bomb and shield pieces
+    * write the bomb and shield classes overwriting the needed methods
+### day 3
+    * finished any unfinished classes
+    * create and add modal that explains the game rules
+    * start adding audio to the game
+### day 4
+    * debug and test any edge cases
+    * finish adding audio
+    * create multiple board color schemes and add them to the page as buttons to toggle between different styles
+    * style the page for the end product
+    * create a demo video
+
+# Bonus features
+  * Choose from different styling of the board (color of squares)
+  * enable both single and multiple player modes
+  * be able to play from different machines (look at firebase)

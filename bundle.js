@@ -187,8 +187,15 @@ class Board {
     this.towPlayer= towPlayer;
   }
 
-  makeTowPlayer(){
+  makeTowPlayer(makeToPlayer){
+
     this.towPlayer = !this.towPlayer;
+    if(this.towPlayer){
+      makeToPlayer.innerText = 'Two Player Mode'
+    }else {
+      makeToPlayer.innerText = 'Single Player Mode'
+
+    }
   }
 
   resetBackgroundColor(color1, color2){
@@ -816,11 +823,8 @@ module.exports = ShieldPiece;
 
 /***/ }),
 /* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawBackGround", function() { return drawBackGround; });
 const Board = __webpack_require__(1);
 
 let c;
@@ -868,20 +872,27 @@ intval = setInterval(function(){drawFrame(locx, locy,
   clearDeadPieces, moveComputer);},60);
 }
 
-function pleaseStopExplosion() {
+function pleaseStopExplosion(stopbomb) {
   stopExplosion = !stopExplosion;
+  if (stopExplosion){
+    stopbomb.innerText = 'off';
+  }else{
+    stopbomb.innerText = 'on';
+  }
 }
 
-function pleaseStopmusic() {
+function pleaseStopmusic(stopMusic) {
   if (!music.paused){
     music.pause();
+    stopMusic.innerText= 'off'
   }else {
     music.play();
+    stopMusic.innerText= 'on'
   }
 }
 
 function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
-	ctx.drawImage(explosionSprite, Xs, Ys , 64, 64, locx, locy, w, h);
+  	ctx.drawImage(explosionSprite, Xs, Ys, 64, 64, locx, locy, w, h);
 	Xs += 64;
 	idx++;
 	if(idx % 5 === 0) {
@@ -942,13 +953,13 @@ $( ()=>{
   drawTheBackgroundOptions();
 
   let stopbomb = document.getElementById("StopBombAduio");
-  stopbomb.addEventListener('click', pleaseStopExplosion);
+  stopbomb.addEventListener('click',()=> pleaseStopExplosion(stopbomb));
 
   let stopMusic = document.getElementById("StopMusic");
-  stopMusic.addEventListener('click', pleaseStopmusic);
+  stopMusic.addEventListener('click', () => pleaseStopmusic(stopMusic));
 
   let makeToPlayer = document.getElementById("twoplayerMode");
-  makeToPlayer.addEventListener('click', ()=> board.makeTowPlayer());
+  makeToPlayer.addEventListener('click', ()=> board.makeTowPlayer(makeToPlayer));
   drawTheBackgroundOptions();
   board.upDateCurrentUserInfor();
 });
@@ -1130,37 +1141,43 @@ function tellUserError(msg ,x, y, time = 1000) {
 
 }
 
-
-
-
 // create modal containt
 // Get the modal
-var modal = document.getElementById('myModal');
+var gameRuleModal = document.getElementById('myModal');
+var gameOptionModal = document.getElementById('optionsModal');
 
-// Get the button that opens the modal
+// Get the button that opens the Modal
 var btn = document.getElementById("myBtn");
+var optionsBtn = document.getElementById("optionsBtn");
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+// Get the <span> element that closes the Modal
+var spanOption = document.getElementsByClassName("close")[0];
+var spanRule = document.getElementsByClassName("close")[1];
 
-// When the user clicks the button, open the modal
-btn.onclick = function() {
-    modal.style.display = "block";
+// When the user clicks the button, open the Modal
+btn.onclick = () => {
+    gameRuleModal.style.display = "block";
+};
+optionsBtn.onclick = () => {
+    gameOptionModal.style.display = "block";
 };
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    modal.style.display = "none";
+// When the user clicks on <span> (x), close the Modal
+spanRule.onclick = () => {
+  gameRuleModal.style.display = "none";
+};
+spanOption.onclick = () => {
+  gameOptionModal.style.display = "none";
 };
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+// When the user clicks anywhere outside of the gameRuleModal, close it
+window.onclick = (event) =>{
+    if (event.target == gameRuleModal) {
+        gameRuleModal.style.display = "none";
+    }else if (event.target == gameOptionModal) {
+        gameOptionModal.style.display = "none";
     }
 };
-
-
 
 
 /***/ })

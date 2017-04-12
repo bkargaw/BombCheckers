@@ -1,10 +1,11 @@
 body {
-  background-color: seashell;
+  background-color: white;
   overflow: hidden;
   width: 100%;
 	margin: 0 auto;
 	font-family:  fantasy,"times new roman",times,serif;
 	font-size: 12px;
+  min-width: 1000px;
 }
 
 header{
@@ -41,6 +42,13 @@ button{
 button:hover{
   background-color: #326891;;
   border-color:#265e8b;
+}
+
+#myBtn{
+  background: red;
+}
+#myBtn:hover{
+  background: green;
 }
 
 .GAME-holder{
@@ -94,15 +102,15 @@ button:hover{
   border-right: 2px solid black;
 }
 
-.controlAudio{
+.infoToTheUser{
   display: flex;
   flex-direction: column;
   position:relative;
   top: -1120px;
-  left: 75%;
+  left: 1100px;
 }
 
-.controlAudio p{
+.infoToTheUser p{
   font-size: 20px;
   margin-bottom: 60px;
   background-color: antiquewhite;
@@ -119,13 +127,6 @@ button:hover{
   header h1{
     left: -20px;
   }
-}
-
-
-
-.controlAudio button{
-  width: 200px;
-  margin-bottom: 100;
 }
 
 /*
@@ -150,20 +151,105 @@ modal stuff below
 .modal-content {
   background-color: #fefefe;
   margin: auto;
-  padding: 20px;
+  padding: 20px 0 0 0;
   border: 1px solid #888;
-  width: 50%;
-  font-size: 20px;
+  width: 60%;
+  font-size: 24px;
   background-color: antiquewhite;
 }
-.modal-content h3{
-  padding-left: 40%;
-  padding-bottom: 30px;
+
+.optionsModal{
+  width: 35%;
+  padding: 0;
+  background-color: white;
+  height: 35%;
+}
+
+.optionsModalLayout{
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  margin-right: 0;
+  background-color: white;
+}
+
+.optionsModal span{
+  position: relative;
+}
+
+.optionsModal h4{
+  text-align: center;
+  padding: 20px 0 10px 0;
+  margin: 0;
+  background-color: antiquewhite;
   border-bottom: 2px solid #949f4d;
+
+}
+
+.optionsModalButtons div{
+  width: inherit;
+  display: flex;
+  justify-content: space-around;
+  align-items: space-around;
+
+}
+
+.optionsModalLayoutTitle{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.optionsModalLayoutButtons{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.optionsModalLayoutTitle h6{
+  font-size: 20px;
+  padding: 8px ;
+  margin: 0;
+}
+.optionsModal button{
+  width: 100px;
+  height: 35px;
+  padding-bottom: 5px;
+}
+#twoplayerMode{
+  width: 200px
+}
+.optionsModal button{
+  width: 100px;
+}
+
+.modal-content span{
+  position: relative;
+  right: 25px;
+  bottom: 12px;
+  color: black;
+}
+.optionsModal span{
+  position: relative;
+  right: 25px;
+  top: 5px;
+}
+
+.modal-content span:hover{
+  color: red;
+}
+.modal-content h3{
+  margin: 0;
+  padding-left: 40%;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #949f4d;
+}
+.modal-body{
+  padding: 25px;
+  background: white;
 }
 .modal-content h4{
   padding-left: 1%;
 }
+
 .modal-content ul li{
   padding-bottom: 20px;
 }
