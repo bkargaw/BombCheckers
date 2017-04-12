@@ -3,7 +3,7 @@
 
 BombCheckers is a javaScript game inspired by the classic game of checkers but with a twist. The twist is that there will be three different piece types on each player's side. Each side will have four *classic* checker pieces in the back rank. The second rank will contain *shield* piece which will move  and behave like classic piece but will be impervious to any explosion. The last piece type will be a *bomb* pieces that move and behave like classic checker pieces but will explode when it captures the other players piece; during the aforementioned explosion any piece within one gird space from the explosion except shield pieces on any player's side will die form the explosion. The game can be played in one or two player mode.
 
-![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live Pics/initial board.png)
+![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live_Pics/initial_board.png)
 
 
 ### Tools Used
@@ -24,10 +24,10 @@ BombCheckers is a javaScript game inspired by the classic game of checkers but w
 
 ###### Before Capturing With a Bomb
 
-  ![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live Pics/before explosion.png)
+  ![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live_Pics/before_explosion.png)
 
 ###### After Capturing With a Bomb
-  ![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live Pics/after explosion.png)
+  ![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live_Pics/after_explosion.png)
 
 
 
