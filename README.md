@@ -26,10 +26,8 @@ BombCheckers is a javaScript game inspired by the classic game of checkers but w
 
   ![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live_Pics/before_explosion.png)
 
-###### After Capturing With a Bomb
+###### During Capturing With a Bomb
   ![alt text](https://github.com/bkargaw/BombCheckers/blob/master/docs/Live_Pics/after_explosion.png)
-
-
 
 #### Computer Player
   The current computer player is a basic implementation of a game ai. It first loops trough all its pieces and select all the ones that can move this turn. Then it sorts them based on which on is the most advanced and tries to see if that piece can capture this turn, if not checks if that piece which directions are possible to move then it choose that move. The allow for the game play agains a computer but it is not ideal. note: further improvements are in the works.
