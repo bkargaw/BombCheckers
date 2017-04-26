@@ -18,9 +18,62 @@ BombCheckers is a javaScript game inspired by the classic game of checkers but w
 #### UI
   The user interface was implemented using click event listener on the canvas and mapping the pix location of the click to grid index that represents the location of the space on the canvas. From there the game checks game checks it the click event is valid input to the game and changes the state of the game based on the current state of the game. After the change has been made the game will render the changed state or will render and error of the input was not a valid input.
 
+  ```js
+  c.addEventListener('click', handleClickFromUser);
+
+  function handleClickFromUser(event){
+    let x = Math.floor(event.layerX / 75);
+    let y = Math.floor(event.layerY / 75);
+    if (_isInbound(x,y)){
+      if(board.canSelect(x,y)){
+        if (board.select(x,y)){
+          // move the piece
+          let bombPiece = board.pieces[x][y];
+          board.endTurn();
+          let clearDeadPieces = () => bombPiece.explode(x,y);
+          let moveComputer = () => board.runComputersTurn();
+          startAnim((x * 75) - 90 , (y * 75) - 90, clearDeadPieces, moveComputer);
+        }else {
+          // select the piece to move
+          drawBackGround();
+          highlightPos(x, y);
+          drawThePieces();
+        }
+      }else {
+        // error for invalid selection
+        tellUserError('Invalid move',200,300);
+      }
+    }
+  }
+  ```
+
 
 #### Explosion Animation
-  The explosion animation was created spite image overlaying. At the event of an explosion the game will figure out where the explosion should take place by converting grid location to pix values. Then the game will grab the already loaded explosion sprite image and loops over the sequence of explosion images and renders them on the canvas on top off each other at 16.5 frames per second. After that the back ground and pieces are redrawn and regular play continues.
+  The explosion animation was created using sprite image overlaying. At the event of an explosion the game will figure out where the explosion should take place by converting grid location to pix values. Then the game will grab the already loaded explosion sprite image and loops over the sequence of explosion images and renders them on the canvas on top off each other at 16.5 frames per second. After that the back ground and pieces are redrawn and regular play continues.
+
+  ```js
+  // call to draw one image from explosion sprite 16 frame per second
+  intval = setInterval(function(){drawFrame(locx, locy,
+    clearDeadPieces, moveComputer);},60);
+
+  // The function that draw the image @x,y
+  function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
+    	ctx.drawImage(explosionSprite, Xs, Ys, 64, 64, locx, locy, w, h);
+  	Xs += 64;
+  	idx++;
+  	if(idx % 5 === 0) {
+  		Xs = 0;
+  		Ys += 64;
+  	}
+  	if(idx > frameCnt){
+      clearInterval(intval);
+      clearDeadPieces();
+      drawBackGround();
+      drawThePieces();
+      moveComputer();
+    }
+  }
+  ```
 
 ###### Before Capturing With a Bomb
 

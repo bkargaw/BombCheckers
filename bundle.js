@@ -872,6 +872,24 @@ intval = setInterval(function(){drawFrame(locx, locy,
   clearDeadPieces, moveComputer);},60);
 }
 
+function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
+  	ctx.drawImage(explosionSprite, Xs, Ys, 64, 64, locx, locy, w, h);
+	Xs += 64;
+	idx++;
+	if(idx % 5 === 0) {
+		Xs = 0;
+		Ys += 64;
+	}
+	if(idx > frameCnt){
+    clearInterval(intval);
+    clearDeadPieces();
+    drawBackGround();
+    drawThePieces();
+    moveComputer();
+  }
+}
+
+
 function pleaseStopExplosion(stopbomb) {
   stopExplosion = !stopExplosion;
   if (stopExplosion){
@@ -888,23 +906,6 @@ function pleaseStopmusic(stopMusic) {
   }else {
     music.play();
     stopMusic.innerText= 'on'
-  }
-}
-
-function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
-  	ctx.drawImage(explosionSprite, Xs, Ys, 64, 64, locx, locy, w, h);
-	Xs += 64;
-	idx++;
-	if(idx % 5 === 0) {
-		Xs = 0;
-		Ys += 64;
-	}
-	if(idx > frameCnt){
-    clearInterval(intval);
-    clearDeadPieces();
-    drawBackGround();
-    drawThePieces();
-    moveComputer();
   }
 }
 
@@ -944,7 +945,9 @@ $( ()=>{
   cBackGroundOriginal.addEventListener('click',
         ChengeBackgroundColor('rgb(173, 168, 168)', 'red'));
   draw();
+
   c.addEventListener('click', handleClickFromUser);
+
   document.body.onkeyup = function(e){
     if(e.keyCode === 32 || e.keyCode === 13) endTurn();
   };

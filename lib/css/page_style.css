@@ -8,6 +8,10 @@ body {
   min-width: 1000px;
 }
 
+canvas:hover{
+  cursor: pointer;
+}
+
 header{
   display: flex;
   justify-content: space-between;
