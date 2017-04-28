@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -167,9 +167,9 @@ module.exports = Piece;
 /***/ (function(module, exports, __webpack_require__) {
 
 const Piece = __webpack_require__(0);
-const BombPiece = __webpack_require__(2);
-const ShieldPiece = __webpack_require__(4);
-const ComputerPlayer = __webpack_require__(3);
+const BombPiece = __webpack_require__(3);
+const ShieldPiece = __webpack_require__(5);
+const ComputerPlayer = __webpack_require__(4);
 
 class Board {
   constructor(ctx, color1, color2,startAnim, drawFrame,towPlayer) {
@@ -624,6 +624,82 @@ module.exports = Board;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["_createColorForGrid"] = _createColorForGrid;
+/* harmony export (immutable) */ __webpack_exports__["_isInbound"] = _isInbound;
+/* harmony export (immutable) */ __webpack_exports__["addModal"] = addModal;
+// below this is the logic for the explosion rendering
+
+function _createColorForGrid(color1, color2){
+  let colorGrid = new Array(8);
+  let fillbox = true;
+  for (let i = 0 ; i < 8; i++) {
+    colorGrid[i] = new Array(8);
+    for (let j = 0 ; j < 8; j++) {
+      if (fillbox){
+        colorGrid[i][j] = color1;
+      }else{
+        colorGrid[i][j] = color2;
+      }
+      fillbox = !fillbox;
+    }
+    fillbox = !fillbox;
+  }
+  return colorGrid;
+}
+
+function _isInbound(x, y){
+  if ( x >= 0 && x <= 7  && y >= 0 && y <= 7 ) return true;
+  return false;
+}
+
+function addModal (){
+  // create modal containt
+  // Get the modal
+  var gameRuleModal =$('#myModal')[0];
+  var gameOptionModal =$('#optionsModal')[0];
+
+  // Get the button that opens the Modal
+  var btn =$("#myBtn")[0];
+  var optionsBtn =$("#optionsBtn")[0];
+
+  // Get the <span> element that closes the Modal
+  var spanOption = $(".close")[0];
+  var spanRule = $(".close")[1];
+
+  // When the user clicks the button, open the Modal
+  btn.onclick = () => {
+      gameRuleModal.style.display = "block";
+  };
+  optionsBtn.onclick = () => {
+      gameOptionModal.style.display = "block";
+  };
+
+  // When the user clicks on <span> (x), close the Modal
+  spanRule.onclick = () => {
+    gameRuleModal.style.display = "none";
+  };
+  spanOption.onclick = () => {
+    gameOptionModal.style.display = "none";
+  };
+
+  // When the user clicks anywhere outside of the gameRuleModal, close it
+  window.onclick = (event) =>{
+      if (event.target == gameRuleModal) {
+          gameRuleModal.style.display = "none";
+      }else if (event.target == gameOptionModal) {
+          gameOptionModal.style.display = "none";
+      }
+  };
+
+}
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Piece = __webpack_require__(0);
@@ -685,7 +761,7 @@ class BombPiece extends Piece {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 class ComputerPlayer {
@@ -781,7 +857,7 @@ module.exports = ComputerPlayer;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Piece = __webpack_require__(0);
@@ -822,10 +898,12 @@ module.exports = ShieldPiece;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Board = __webpack_require__(1);
+const Util = __webpack_require__(2);
+const DrawUtil = __webpack_require__(8);
 
 let c;
 let color1;
@@ -861,8 +939,7 @@ var frameCnt = 25;
 var idx = 0;
 var intval;
 function startAnim(locx, locy, clearDeadPieces, moveComputer) {
-  drawBackGround();
-  drawThePieces();
+  draw();
   if(!stopExplosion) explosionSound.play();
 	clearInterval(intval);
 	Xs = 0;
@@ -883,8 +960,7 @@ function drawFrame(locx, locy, clearDeadPieces,moveComputer) {
 	if(idx > frameCnt){
     clearInterval(intval);
     clearDeadPieces();
-    drawBackGround();
-    drawThePieces();
+    draw();
     moveComputer();
   }
 }
@@ -909,12 +985,11 @@ function pleaseStopmusic(stopMusic) {
   }
 }
 
-$( ()=>{
-  c = document.getElementById("canvas");
+$(()=>{
+  c = $("#canvas")[0];
   c.width  = 600;
   c.height = 600;
   ctx = c.getContext("2d");
-
 
   //default board colors
   color1 = 'rgb(249, 189, 129)';
@@ -922,7 +997,7 @@ $( ()=>{
   board = new Board(ctx, color1, color2, startAnim, drawFrame, towPlayer);
 
   // background option canvas 2
-  cBackGround2 = document.getElementById("background2");
+  cBackGround2 = $("#background2")[0];
   cBackGround2.width  = 100;
   cBackGround2.height = 100;
   cBackGround2Ctx2 = cBackGround2.getContext("2d");
@@ -930,7 +1005,7 @@ $( ()=>{
         ChengeBackgroundColor('rgb(249, 189, 129)', 'rgb(255, 55, 0)'));
 
   // background option canvas 1
-  cBackGround1 = document.getElementById("background1");
+  cBackGround1 = $("#background1")[0];
   cBackGround1.width  = 100;
   cBackGround1.height = 100;
   cBackGround1Ctx1 = cBackGround1.getContext("2d");
@@ -938,7 +1013,7 @@ $( ()=>{
         ChengeBackgroundColor('rgb(68, 62, 62)', 'white'));
 
   // background option canvas original
-  cBackGroundOriginal = document.getElementById("backgroundOrignal");
+  cBackGroundOriginal = $("#backgroundOrignal")[0];
   cBackGroundOriginal.width  = 100;
   cBackGroundOriginal.height = 100;
   cBackGroundOriginalCtx = cBackGroundOriginal.getContext("2d");
@@ -951,26 +1026,28 @@ $( ()=>{
   document.body.onkeyup = function(e){
     if(e.keyCode === 32 || e.keyCode === 13) endTurn();
   };
-  let reset = document.getElementById("resetGame");
+  let reset = $("#resetGame")[0];
   reset.addEventListener('click', resetGame);
   drawTheBackgroundOptions();
 
-  let stopbomb = document.getElementById("StopBombAduio");
+  let stopbomb = $("#StopBombAduio")[0];
   stopbomb.addEventListener('click',()=> pleaseStopExplosion(stopbomb));
 
-  let stopMusic = document.getElementById("StopMusic");
+  let stopMusic = $("#StopMusic")[0];
   stopMusic.addEventListener('click', () => pleaseStopmusic(stopMusic));
 
-  let makeToPlayer = document.getElementById("twoplayerMode");
+  let makeToPlayer = $("#twoplayerMode")[0];
   makeToPlayer.addEventListener('click', ()=> board.makeTowPlayer(makeToPlayer));
   drawTheBackgroundOptions();
   board.upDateCurrentUserInfor();
+
+  // add modals
+  Util.addModal();
 });
 
 function resetGame() {
   board = new Board(ctx, color1, color2);
-  drawBackGround();
-  drawThePieces();
+  draw();
 }
 
 function ChengeBackgroundColor(col1, col2){
@@ -984,16 +1061,14 @@ function ChengeBackgroundColor(col1, col2){
     color1 = col1;
     color2 = col2;
     board.resetBackgroundColor(color1, color2);
-    drawBackGround();
-    drawThePieces();
+    draw();
   };
 
 }
 
-
   function draw() {
     drawBackGround();
-    drawThePieces();
+    DrawUtil.drawThePieces(ctx, board);
   }
 
   function drawTheBackgroundOptions() {
@@ -1015,7 +1090,7 @@ function ChengeBackgroundColor(col1, col2){
 
   function drawBackGround() {
     ctx.clearRect(0,0,c.width, c.height);
-    let colors = _createColorForGrid();
+    let colors = Util._createColorForGrid(color1, color2);
     for (let i = 0 ; i < 8; i++){
       for (let j = 0 ; j < 8; j++){
         let x = i * 75 ;
@@ -1028,66 +1103,10 @@ function ChengeBackgroundColor(col1, col2){
     }
   }
 
-  function drawThePieces(){
-    let piece;
-    let scale = 75;
-    for (let i = 0; i < 8 ; i++){
-      for(let j = 0; j < 8 ; j++){
-        piece = board.pieces[i][j];
-        if( piece ){
-          let scaledX = piece.x;
-          let scaledY = piece.y;
-          let img = piece.getImage();
-          if(img.complete) { //check if image was already loaded by the browser
-            drawAPiece(img, piece.x , piece.y, scale);
-          }else {
-            img.onload = ()=> drawAPiece(img, scaledX , scaledY, scale);
-          }
-        }
-      }
-    }
-  }
-
-function highlightPos(i, j){
-  let x = i * 75 ;
-  let y = j * 75;
-  ctx.beginPath();
-  ctx.rect(x, y, 75, 75);
-  ctx.fillStyle = highlightColor;
-  ctx.fill();
-}
-
-function drawAPiece(baseImage, x , y, scale){
-  ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
-}
-
-function _createColorForGrid(){
-  let colorGrid = new Array(8);
-  let fillbox = true;
-  for (let i = 0 ; i < 8; i++) {
-    colorGrid[i] = new Array(8);
-    for (let j = 0 ; j < 8; j++) {
-      if (fillbox){
-        colorGrid[i][j] = color1;
-      }else{
-        colorGrid[i][j] = color2;
-      }
-      fillbox = !fillbox;
-    }
-    fillbox = !fillbox;
-  }
-  return colorGrid;
-}
-
-function _isInbound(x, y){
-  if ( x >= 0 && x <= 7  && y >= 0 && y <= 7 ) return true;
-  return false;
-}
-
 function handleClickFromUser(event){
   let x = Math.floor(event.layerX / 75);
   let y = Math.floor(event.layerY / 75);
-  if (_isInbound(x,y)){
+  if (Util._isInbound(x,y)){
     if(board.canSelect(x,y)){
       if (board.select(x,y)){
         let bombPiece = board.pieces[x][y];
@@ -1097,8 +1116,8 @@ function handleClickFromUser(event){
         startAnim((x * 75) - 90 , (y * 75) - 90, clearDeadPieces, moveComputer);
       }else {
         drawBackGround();
-        highlightPos(x, y);
-        drawThePieces();
+        DrawUtil.highlightPos(ctx, x, y, highlightColor);
+        DrawUtil.drawThePieces(ctx, board);
       }
 
     }else {
@@ -1117,7 +1136,7 @@ function endTurn(){
     }else{
       board.endTurn();
       drawBackGround();
-      drawThePieces();
+      DrawUtil.drawThePieces(ctx, board);
       board.runComputersTurn();
 
     }
@@ -1138,49 +1157,53 @@ function tellUserError(msg ,x, y, time = 1000) {
     ctx.fillText(msg,x,y);
     setTimeout(function(){
       drawBackGround();
-      drawThePieces();
+      DrawUtil.drawThePieces(ctx, board);
     }, time);
   }
-
 }
 
-// create modal containt
-// Get the modal
-var gameRuleModal = document.getElementById('myModal');
-var gameOptionModal = document.getElementById('optionsModal');
 
-// Get the button that opens the Modal
-var btn = document.getElementById("myBtn");
-var optionsBtn = document.getElementById("optionsBtn");
+/***/ }),
+/* 7 */,
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// Get the <span> element that closes the Modal
-var spanOption = document.getElementsByClassName("close")[0];
-var spanRule = document.getElementsByClassName("close")[1];
-
-// When the user clicks the button, open the Modal
-btn.onclick = () => {
-    gameRuleModal.style.display = "block";
-};
-optionsBtn.onclick = () => {
-    gameOptionModal.style.display = "block";
-};
-
-// When the user clicks on <span> (x), close the Modal
-spanRule.onclick = () => {
-  gameRuleModal.style.display = "none";
-};
-spanOption.onclick = () => {
-  gameOptionModal.style.display = "none";
-};
-
-// When the user clicks anywhere outside of the gameRuleModal, close it
-window.onclick = (event) =>{
-    if (event.target == gameRuleModal) {
-        gameRuleModal.style.display = "none";
-    }else if (event.target == gameOptionModal) {
-        gameOptionModal.style.display = "none";
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["drawThePieces"] = drawThePieces;
+/* harmony export (immutable) */ __webpack_exports__["highlightPos"] = highlightPos;
+  function drawThePieces(ctx, board){
+    let piece;
+    let scale = 75;
+    for (let i = 0; i < 8 ; i++){
+      for(let j = 0; j < 8 ; j++){
+        piece = board.pieces[i][j];
+        if( piece ){
+          let scaledX = piece.x;
+          let scaledY = piece.y;
+          let img = piece.getImage();
+          if(img.complete) { //check if image was already loaded by the browser
+            drawAPiece(ctx, img, piece.x , piece.y, scale);
+          }else {
+            img.onload = ()=> drawAPiece(ctx, img, scaledX , scaledY, scale);
+          }
+        }
+      }
     }
-};
+  }
+
+  function drawAPiece(ctx, baseImage, x , y, scale){
+    ctx.drawImage(baseImage, x * scale , y * scale, 75, 75 );
+  }
+
+  function highlightPos(ctx, i, j, highlightColor){
+    let x = i * 75 ;
+    let y = j * 75;
+    ctx.beginPath();
+    ctx.rect(x, y, 75, 75);
+    ctx.fillStyle = highlightColor;
+    ctx.fill();
+  }
 
 
 /***/ })
